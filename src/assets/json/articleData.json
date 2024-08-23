@@ -1,0 +1,41 @@
+{
+    "article": {
+        "title": "Understanding Multiple System Atrophy",
+        "content": "Multiple System Atrophy (MSA) symptoms vary widely depending on which parts of the nervous system are affected. The symptoms typically fall into two categories:",
+        "points": [
+        "Parkinsonian Symptoms: These include tremors, muscle stiffness, slow movements, and difficulty with balance and coordination. This form is often referred to as MSA-P.",
+        "Autonomic Symptoms: These involve dysfunction in the autonomic nervous system. Symptoms might include fainting spells, urinary incontinence, and constipation. This form is often referred to as MSA-C (cerebellar type)."
+        ]
+    },
+    "reviews": [
+        {
+        "username": "David Thompson",
+        "date": "15/08/2024",
+        "recommend": true,
+        "rating": 5,
+        "comment": "Excellent resource, provided useful tips on identifying symptoms."
+        },
+        {
+        "username": "Jessica Lee",
+        "date": "01/08/2024",
+        "recommend": true,
+        "rating": 4,
+        "comment": "This material was very informative and easy to understand."
+        },
+        {
+        "username": "Alice",
+        "date": "31/07/2024",
+        "recommend": false,
+        "rating": 3,
+        "comment": "Excellent resource, provided useful tips on identifying symptoms."
+        },
+        {
+        "username": "Ian",
+        "date": "21/07/2024",
+        "recommend": true,
+        "rating": 5,
+        "comment": "This material was very informative and easy to understand."
+        } 
+    ]
+}
+  
