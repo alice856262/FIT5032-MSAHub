@@ -1,94 +1,134 @@
 <template>
-    <div class="container article-details">
-      <div class="row">
-        <div class="col-md-8 col-sd-8">
-          <h1 class="article-title">{{ article.title }}</h1>
-          <p class="article-text">{{ article.content }}</p>
-          <ul>
-            <li v-for="point in article.points" :key="point">{{ point }}</li>
-          </ul>
-          <button class="btn btn-danger mb-4">Read More</button>
-        </div>
-        <div class="col-md-4 col-sd-4">
-          <div class="photo-placeholder">Photo</div>
-        </div>
+  <div class="container article-details">
+    <div class="row">
+      <div class="col-md-8 col-sd-8">
+        <h1 class="article-title">{{ article.title }}</h1>
+        <p class="article-text">{{ article.content }}</p>
+        <ul class="article-points">
+          <li v-for="point in article.points" :key="point">{{ point }}</li>
+        </ul>
+        <button class="btn btn-primary">Read More</button>
+      </div>
+      <div class="col-md-4 col-sd-4">
+        <div class="photo-placeholder">Photo</div>
+      </div>
 
-        <div class="col-md-12">
-          <!-- Rating Section -->
-          <div class="rating-section d-flex align-items-center">
-            <!-- Progress Ring -->
-            <div class="progress-ring">
-              <svg class="progress-ring__svg" width="300" height="300">
-                <circle
-                    class="progress-ring__circle"
-                    :stroke-dasharray="circumference"
-                    :stroke-dashoffset="strokeDashoffset"
-                    stroke="#f7a346"
-                    stroke-width="13"
-                    fill="transparent"
-                    r="85"
-                    cx="155"
-                    cy="100"
-                    />
-              </svg>
-              <div class="progress-ring__text">{{ recommendationPercentage }}%<br />Recommend this article</div>
+      <div class="col-md-12">
+        <!-- Rating Section -->
+        <div class="rating-section d-flex align-items-center">
+          <!-- Progress Ring -->
+          <div class="progress-ring">
+            <svg class="progress-ring__svg" width="300" height="300">
+              <circle
+                class="progress-ring__circle"
+                :stroke-dasharray="circumference"
+                :stroke-dashoffset="strokeDashoffset"
+                stroke="#f7a346"
+                stroke-width="13"
+                fill="transparent"
+                r="90"
+                cx="150"
+                cy="145"
+              />
+            </svg>
+            <div class="progress-ring__text">
+              {{ recommendationPercentage }}%<br />Recommend this article
             </div>
-  
-            <!-- Rating Details -->
-            <div class="rating-details ms-4 col-md-3 col-sd-3">
-              <div v-for="n in [5, 4, 3, 2, 1]" :key="n" class="rating-bar">
-                <span>{{ n }}</span>
-                <div class="rating-bar__container">
-                  <div class="rating-bar__fill" :style="{ width: getRatingPercentage(n) + '%' }"></div>
-                </div>
-              </div>
-            </div>  
-            <div class="rating-details ms-4 col-md-5 col-sd-5">  
-              <div class="rating-overview">
-                <span class="rating-stars">{{ averageRating.toFixed(1) }} {{ generateStars(averageRating) }}</span>
-                <span>{{ reviews.length }} Reviews</span>
-              </div>
-              <div class="col-md-5 row-mb-3">
-                <button class="btn btn-outline-primary add-review">Add Your Review</button>
+          </div>
+
+          <!-- Rating Details -->
+          <div class="rating-details ms-4 col-md-3 col-sd-3">
+            <div v-for="n in [5, 4, 3, 2, 1]" :key="n" class="rating-bar">
+              <span>{{ n }}</span>
+              <div class="rating-bar__container">
+                <div class="rating-bar__fill" :style="{ width: getRatingPercentage(n) + '%' }"></div>
               </div>
             </div>
-          </div>  
-          <!-- Reviews Section -->
-          <div class="reviews mt-4">
-            <div v-for="(review, index) in reviews" :key="index" class="review-item">
-                <div class="row">
-                <!-- Left Section: Recommendation and User Info (6 columns) -->
-                <div class="col-md-4 d-flex align-items-center">
-                    <div>
-                    <span v-if="review.recommend" class="recommend-icon">✔️</span>
-                    <span v-else class="not-recommend-icon">✖︎</span>
-                    </div>
-                    <div class="ms-3">
-                    <p class="review-recommend mb-1">
-                        {{ review.recommend ? "Yes, I recommend this article" : "No, I do not recommend this article" }}
-                    </p>
-                    <p class="review-author">{{ review.username }} ({{ review.date }})</p>
-                    </div>
-                </div>
+          </div>
+          <div class="rating-details ms-4 col-md-5 col-sd-5">
+            <div class="rating-overview">
+              <span class="rating-stars">{{ averageRating.toFixed(1) }} {{ generateStars(averageRating) }}</span>
+              <span>{{ reviews.length }} Reviews</span>
+            </div>
+            <div class="mt-3">
+              <button class="btn btn-outline-primary add-review" @click="handleAddReview">Add Your Review</button>
+            </div>
+          </div>
+        </div>
 
-                <!-- Right Section: Rating & Review Comment (6 columns) -->
-                <div class="col-md-8 d-flex align-items-center justify-content-between">
-                    <div class="review-stars">
-                    <span v-for="n in review.rating" :key="n">★</span>
-                    <span v-for="n in 5 - review.rating" :key="n + review.rating">☆</span>
-                    </div>
-                    <p class="review-text">"{{ review.comment }}"</p>
+        <!-- Reviews Section -->
+        <div class="reviews mt-4">
+          <div v-for="(review, index) in reviews" :key="index" class="review-item">
+            <div class="row">
+              <!-- Left Section: Recommendation and User Info (6 columns) -->
+              <div class="col-md-4 d-flex align-items-center">
+                <div>
+                  <span v-if="review.recommend" class="recommend-icon">✔️</span>
+                  <span v-else class="not-recommend-icon">✖︎</span>
                 </div>
+                <div class="ms-3">
+                  <p class="review-recommend mb-1">
+                    {{ review.recommend ? "Yes, I recommend this article" : "No, I do not recommend this article" }}
+                  </p>
+                  <p class="review-author">
+                    {{ users[review.userId]?.firstName || 'Unknown User' }} {{ users[review.userId]?.lastName || '' }} ({{ formatDate(review.date) }})
+                  </p>
                 </div>
+              </div>
+
+              <!-- Right Section: Rating & Review Comment (6 columns) -->
+              <div class="col-md-2 d-flex align-items-center justify-content-between">
+                <div class="review-stars">
+                  <span v-for="n in review.rating" :key="n">★</span>
+                  <span v-for="n in 5 - review.rating" :key="n + review.rating">☆</span>
+                </div>
+              </div>
+              <div class="col-md-6 d-flex align-items-center justify-content-between">   
+                <p class="review-text">"{{ review.comment }}"</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modal for Adding Review -->
+    <div v-if="showModal" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <h3 class="mb-4">Add Review</h3>
+        <div class="form-group">
+          <label>Rate this article</label>
+          <div class="star-rating">
+            <span v-for="star in 5" :key="star" class="star" :class="{ active: star <= newReview.rating }" @click="newReview.rating = star">★</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Would you recommend this article to others?</label>
+          <div>
+            <input type="radio" id="yes" value="true" v-model="newReview.recommend">
+            <label for="yes">Yes</label>
+            <input type="radio" id="no" value="false" v-model="newReview.recommend">
+            <label for="no">No</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Please write your review:</label>
+          <textarea class="form-control" v-model="newReview.comment"></textarea>
+        </div>
+        <button class="btn btn-primary" @click="submitReview">Submit</button>
+      </div>
+    </div>
+  </div>
 </template>
-  
+
 <script>
+import { ref } from 'vue';
+import { collection, getDocs, query, where, doc, getDoc, addDoc } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig.js';
+import { useAuth } from '../router/useAuth.js';
+
 export default {
+  props: ['id'],
   data() {
     return {
       article: {
@@ -97,8 +137,15 @@ export default {
         points: []
       },
       reviews: [],
-      radius: 85,
-      circumference: 2 * Math.PI * 85, // 2πr where r = 85 (the radius of the circle)
+      users: {},
+      showModal: false,
+      newReview: {
+        rating: 0,
+        recommend: null,
+        comment: ''
+      },
+      radius: 90,
+      circumference: 2 * Math.PI * 90,
     };
   },
   computed: {
@@ -120,13 +167,89 @@ export default {
     this.fetchArticleData();
   },
   methods: {
-    fetchArticleData() {
-      fetch('/src/assets/json/articleData.json')
-        .then(response => response.json())
-        .then(data => {
-          this.article = data.article;
-          this.reviews = data.reviews;
+    async fetchArticleData() {
+      try {
+        // Fetch article details
+        const articleDoc = doc(db, 'articles', this.id);
+        const articleSnapshot = await getDoc(articleDoc);
+        if (articleSnapshot.exists()) {
+          this.article = articleSnapshot.data();
+        }
+
+        // Fetch reviews for this article
+        const reviewsQuery = query(collection(db, 'reviews'), where('articleId', '==', this.id));
+        const reviewsSnapshot = await getDocs(reviewsQuery);
+        const reviewsData = reviewsSnapshot.docs.map(doc => {
+          const review = doc.data();
+          review.date = review.date.toDate(); // Convert Firestore Timestamp to JS Date
+          return { id: doc.id, ...review };
         });
+
+        // Fetch user details for each review
+        for (const review of reviewsData) {
+          const userDoc = doc(db, 'users', review.userId);
+          const userSnapshot = await getDoc(userDoc);
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            this.users[review.userId] = userData; // Directly assign to users object
+          }
+        }
+
+        this.reviews = reviewsData;
+      } catch (error) {
+        console.error('Error fetching article or review data:', error);
+      }
+    },
+    handleAddReview() {
+      const { isAuthenticated } = useAuth();
+      if (!isAuthenticated.value) {
+        this.$router.push('/login');
+      } else {
+        this.showModal = true;
+      }
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    async submitReview() {
+      const { currentUser } = useAuth();
+
+      if (currentUser && currentUser.value) {
+        try {
+          // Add the new review to Firestore
+          await addDoc(collection(db, 'reviews'), {
+            userId: currentUser.value.uid,
+            articleId: this.id,
+            date: new Date(),
+            recommend: this.newReview.recommend === 'true',
+            rating: this.newReview.rating,
+            comment: this.newReview.comment,
+          });
+
+          // Add new review locally to the list
+          this.reviews.push({
+            userId: currentUser.value.uid,
+            date: new Date(),
+            recommend: this.newReview.recommend === 'true',
+            rating: this.newReview.rating,
+            comment: this.newReview.comment
+          });
+
+          this.closeModal();
+          this.resetForm();
+        } catch (error) {
+          console.error('Error submitting review:', error);
+        }
+      } else {
+        this.$router.push('/login');
+      }
+    },
+    resetForm() {
+      this.newReview = {
+        rating: 0,
+        recommend: null,
+        comment: ''
+      };
     },
     generateStars(averageRating) {
       const fullStars = Math.floor(averageRating);
@@ -139,17 +262,28 @@ export default {
       if (this.reviews.length === 0) return 0;
       const ratingCount = this.reviews.filter(review => review.rating === rating).length;
       return (ratingCount / this.reviews.length) * 100;
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString(); // Ensure it's a JS Date object
     }
   }
 };
 </script>
 
 <style scoped>
-/* Styling for the progress ring */
+.container {
+  background-color: #f6f4f3;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+}
+
 .progress-ring {
   position: relative;
-  width: 450px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
 }
 
 .progress-ring__text {
@@ -158,29 +292,31 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   color: #333;
   font-weight: bold;
 }
 
-/* Styling for the rating bars */
 .rating-bar {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .rating-bar__container {
-  width: 250px;
+  width: 100%;
   height: 10px;
-  background-color: #f6f4f3;
+  background-color: #e9ecef;
   margin-left: 10px;
+  border-radius: 5px;
+  overflow: hidden;
   position: relative;
 }
 
 .rating-bar__fill {
   height: 100%;
   background-color: #f7a346;
+  border-radius: 5px;
 }
 
 .rating-stars {
@@ -198,60 +334,44 @@ export default {
   margin-right: 10px;
 }
 
-.article-details {
-  background-color: #f6f4f3;
-  padding: 30px;
-  border-radius: 15px;
-}
-
 .article-title {
   font-size: 32px;
   font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .article-text {
   font-size: 18px;
-  line-height: 1.5;
+  line-height: 1.8;
+  margin-bottom: 15px;
 }
 
-.rating-section {
+.article-points {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.photo-placeholder {
+  width: 100%;
+  height: 200px;
+  background-color: #ffcf56;
   display: flex;
   align-items: center;
-}
-
-.rating-circle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 20px;
-}
-
-.rating-percentage {
+  justify-content: center;
   font-size: 24px;
-  font-weight: bold;
-  color: #ffcf56;
-}
-
-.rating-stars {
-  display: flex;
-  align-items: center;
-  font-size: 24px;
-  color: #ffa500;
-  margin-bottom: 10px;
-}
-
-.add-review {
-  font-size: 16px;
-}
-
-.reviews {
-  margin-top: 30px;
+  color: #555;
+  border-radius: 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .review-item {
-  border-top: 1px solid #ddd;
-  padding-top: 15px;
-  margin-top: 15px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .review-author {
@@ -269,15 +389,65 @@ export default {
   font-size: 16px;
 }
 
-.photo-placeholder {
+.add-review {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  background-color: #e5533d;
+  border-color: #e5533d;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #c94431;
+  border-color: #c94431;
+}
+
+.btn-outline-primary {
+  border-color: #e5533d;
+  color: #e5533d;
+}
+
+.btn-outline-primary:hover {
+  background-color: #e5533d;
+  color: white;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 200px;
-  background-color: #ffcf56;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  color: #555;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffcf78;
+  padding: 30px;
   border-radius: 15px;
+  width: 50%;
+}
+
+.star-rating {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.star {
+  cursor: pointer;
+  font-size: 24px;
+  color: #f7a346;
+}
+
+.star.active {
+  color: #ffa500;
 }
 </style>

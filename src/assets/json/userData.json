@@ -1,0 +1,15 @@
+{
+    "user": {
+        "userId": 1,
+        "firstName": "David",
+        "lastName": "Thompson",
+        "gender": "Male",
+        "email": "david@test.com",        
+        "phone": "0412345678",
+        "password": "David123#",
+        "dob": "01/01/1965",
+        "address": "456 Health St., Clayton, VIC, 3168",
+        "reason": "patient"
+    }
+  }
+  

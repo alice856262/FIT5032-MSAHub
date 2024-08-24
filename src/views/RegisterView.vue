@@ -94,13 +94,14 @@
               <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-5">
             <p class="text-center">Already registered? <router-link to="/login">Login</router-link></p>
           </div>
         </form>
       </div>
     </div>
-  </div>  
+  </div>
+  <br>
 </template>
   
 <script setup>

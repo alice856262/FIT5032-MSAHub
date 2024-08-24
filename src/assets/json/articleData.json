@@ -1,41 +1,103 @@
 {
-    "article": {
-        "title": "Understanding Multiple System Atrophy",
-        "content": "Multiple System Atrophy (MSA) symptoms vary widely depending on which parts of the nervous system are affected. The symptoms typically fall into two categories:",
-        "points": [
-        "Parkinsonian Symptoms: These include tremors, muscle stiffness, slow movements, and difficulty with balance and coordination. This form is often referred to as MSA-P.",
-        "Autonomic Symptoms: These involve dysfunction in the autonomic nervous system. Symptoms might include fainting spells, urinary incontinence, and constipation. This form is often referred to as MSA-C (cerebellar type)."
-        ]
-    },
+    "articles": [
+        {
+            "id": 1,
+            "type": "Educational Materials",
+            "title": "Understanding Multiple System Atrophy (MSA)",
+            "content": "MSA symptoms vary widely depending on which parts of the nervous system are affected. The symptoms typically fall into two categories:",
+            "points": [
+                "Parkinsonian Symptoms: These include tremors, muscle stiffness, slow movements, and difficulty with balance and coordination. This form is often referred to as MSA-P.",
+                "Autonomic Symptoms: These involve dysfunction in the autonomic nervous system. Symptoms might include fainting spells, urinary incontinence, and constipation. This form is often referred to as MSA-C (cerebellar type)."
+            ]
+        },
+        {
+            "id": 2,
+            "type": "Caregiving Resources",
+            "title": "Exploring Caregiving Tips for MSA Patients",
+            "content": "Caring for a loved one with Multiple System Atrophy (MSA) can be a challenging and emotional journey. This article provides valuable tips and strategies to help caregivers navigate the complexities of MSA care, from managing physical symptoms to offering emotional support. With the right tools and knowledge, caregivers can make a significant difference in the quality of life for MSA patients."
+        },
+        {
+            "id": 3,
+            "type": "Educational Materials",
+            "title": "Diagnosis of MSA",
+            "content": "Diagnosing MSA can be challenging due to its similarity to other conditions, particularly Parkinson's disease. Diagnosis typically involves a combination of:",
+            "points": [
+                "Clinical Evaluation: A detailed history and neurological examination to identify characteristic symptoms.",
+                "Imaging Tests: MRI scans can show changes in brain structures associated with MSA.",
+                "Autonomic Function Tests: These tests assess the functioning of the autonomic nervous system, which may be compromised in MSA."
+            ]
+        }
+    ],
     "reviews": [
         {
-        "username": "David Thompson",
-        "date": "15/08/2024",
-        "recommend": true,
-        "rating": 5,
-        "comment": "Excellent resource, provided useful tips on identifying symptoms."
+            "id": 1,
+            "userId": 1,
+            "articleId": 1,
+            "username": "David Thompson",
+            "date": "15/08/2024",
+            "recommend": true,
+            "rating": 5,
+            "comment": "Excellent resource, provided useful tips on identifying symptoms."
         },
         {
-        "username": "Jessica Lee",
-        "date": "01/08/2024",
-        "recommend": true,
-        "rating": 4,
-        "comment": "This material was very informative and easy to understand."
+            "id": 2,
+            "userId": 2,
+            "articleId": 1,
+            "username": "Jessica Lee",
+            "date": "01/08/2024",
+            "recommend": true,
+            "rating": 4,
+            "comment": "This material was very informative."
         },
         {
-        "username": "Alice",
-        "date": "31/07/2024",
-        "recommend": false,
-        "rating": 3,
-        "comment": "Excellent resource, provided useful tips on identifying symptoms."
+            "id": 3,
+            "userId": 3,
+            "articleId": 1,
+            "username": "Alice",
+            "date": "31/07/2024",
+            "recommend": false,
+            "rating": 3,
+            "comment": "Easy to understand."
         },
         {
-        "username": "Ian",
-        "date": "21/07/2024",
-        "recommend": true,
-        "rating": 5,
-        "comment": "This material was very informative and easy to understand."
-        } 
+            "id": 4,
+            "userId": 4,
+            "articleId": 1,
+            "username": "Ian",
+            "date": "21/07/2024",
+            "recommend": true,
+            "rating": 5,
+            "comment": "This material was very informative and easy to understand."
+        },
+        {
+            "id": 5,
+            "userId": 5,
+            "articleId": 2,
+            "username": "John Davis",
+            "date": "20/08/2024",
+            "recommend": true,
+            "rating": 5,
+            "comment": "These tips were incredibly helpful. As a new caregiver, I was overwhelmed, but the practical advice on managing daily activities made a big difference."
+        },
+        {
+            "id": 6,
+            "userId": 6,
+            "articleId": 2,
+            "username": "Emily",
+            "date": "28/07/2024",
+            "recommend": true,
+            "rating": 4,
+            "comment": "The section on symptom management was particularly insightful."
+        },
+        {
+            "id": 7,
+            "userId": 1,
+            "articleId": 2,
+            "username": "David Thompson",
+            "date": "15/07/2024",
+            "recommend": true,
+            "rating": 5,
+            "comment": "I appreciated the emphasis on emotional support. Sometimes we get so caught up in the physical care that we forget how important it is to be there emotionally for our loved ones."
+        }
     ]
 }
-  

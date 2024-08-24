@@ -20,13 +20,21 @@
         <li class="nav-item">
           <router-link to="/community" class="nav-link custom-nav-link" active-class="active" aria-current="page">COMMUNITY</router-link>
         </li>
-        <li class="nav-item">
+        <!-- Show CARING TOOL, PROFILE and LOGOUT button if logged in -->
+        <li class="nav-item" v-if="isAuthenticated">
+          <router-link to="/tool" class="nav-link custom-nav-link" active-class="active" aria-current="page">CARING TOOL</router-link>
+        </li>
+        <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/profile" class="nav-link custom-nav-link" active-class="active" aria-current="page">PROFILE</router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="isAuthenticated">
+          <a href="#" @click.prevent="logout" class="nav-link custom-nav-link">LOGOUT</a>
+        </li>
+        <!-- Show LOGIN and REGISTER buttons if not logged in -->
+        <li class="nav-item" v-if="!isAuthenticated">
           <router-link to="/login" class="nav-link custom-nav-link" active-class="active">LOGIN</router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="!isAuthenticated">
           <router-link to="/register" class="nav-link custom-nav-link" active-class="active">REGISTER</router-link>
         </li>
       </ul>
@@ -38,14 +46,11 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { useAuth } from './router/useAuth.js';
 import Footer from './components/Footer.vue';
 
-export default {
-  components: {
-    Footer,
-  },
-};
+const { isAuthenticated, logout } = useAuth();
 </script>
 
 <style scoped>
