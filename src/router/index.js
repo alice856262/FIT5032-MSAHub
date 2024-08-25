@@ -8,6 +8,7 @@ import ArticleDetails from '../views/ArticleDetails.vue'
 import CommunityView from '../views/CommunityView.vue'
 import ToolView from '../views/ToolView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 
@@ -48,6 +49,12 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: ProfileView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: DashboardView,
     meta: { requiresAuth: true }
   },
   {

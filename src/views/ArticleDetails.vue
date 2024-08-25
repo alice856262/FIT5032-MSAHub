@@ -51,7 +51,7 @@
               <span>{{ reviews.length }} Reviews</span>
             </div>
             <div class="mt-3">
-              <button class="btn btn-outline-primary add-review" @click="handleAddReview">Add Your Review</button>
+              <button class="btn btn-primary-custom add-review" @click="handleAddReview">Add Your Review</button>
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@
     <!-- Modal for Adding Review -->
     <div v-if="showModal" class="modal" @click.self="closeModal">
       <div class="modal-content">
-        <h3 class="mb-4">Add Review</h3>
+        <h3>Add Your Review</h3>
         <div class="form-group">
           <label>Rate this article</label>
           <div class="star-rating">
@@ -106,16 +106,19 @@
           <label>Would you recommend this article to others?</label>
           <div>
             <input type="radio" id="yes" value="true" v-model="newReview.recommend">
-            <label for="yes">Yes</label>
+            <label for="yes" class="me-3">Yes</label>
             <input type="radio" id="no" value="false" v-model="newReview.recommend">
             <label for="no">No</label>
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group mt-3 mb-4">
           <label>Please write your review:</label>
           <textarea class="form-control" v-model="newReview.comment"></textarea>
         </div>
-        <button class="btn btn-primary" @click="submitReview">Submit</button>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-primary" @click="submitReview">Submit</button>
+          <button class="btn btn-secondary" @click="closeModal">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
@@ -405,17 +408,18 @@ export default {
   border-color: #c94431;
 }
 
-.btn-outline-primary {
-  border-color: #e5533d;
-  color: #e5533d;
+button.btn-primary-custom {
+    border-color: #e5533d;
+    border-width: 3px;
+    color: #555;
+}
+  
+button.btn-primary-custom:hover {
+    background-color: #e5533d;
+    border-color: #e5533d;
+    color: #f6f4f3;
 }
 
-.btn-outline-primary:hover {
-  background-color: #e5533d;
-  color: white;
-}
-
-/* Modal Styles */
 .modal {
   position: fixed;
   top: 0;
@@ -444,7 +448,7 @@ export default {
 .star {
   cursor: pointer;
   font-size: 24px;
-  color: #f7a346;
+  color: #e9ecef;
 }
 
 .star.active {

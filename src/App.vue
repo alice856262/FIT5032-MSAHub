@@ -1,11 +1,10 @@
 <template>
   <div id="app" style="margin-left: 10px; margin-right: 10px;">
     <header class="d-flex justify-content-between align-items-center py-3">
-      <div class="d-flex align-items-center" style="margin-left: 35px;">
+      <div class="d-flex align-items-center" style="width: 250px; margin-left: 35px;">
         <a href="/">
           <img src="./assets/MSA_Hub_logo.png" alt="MSA Hub" style="height: 50px;">
         </a>
-        <h3 class="ms-3 mb-0" style="font-weight: bold;">MSA Hub</h3>
       </div>
       <ul class="nav nav-pills" style="margin-right: 20px;">
         <li class="nav-item">
@@ -20,12 +19,15 @@
         <li class="nav-item">
           <router-link to="/community" class="nav-link custom-nav-link" active-class="active" aria-current="page">COMMUNITY</router-link>
         </li>
-        <!-- Show CARING TOOL, PROFILE and LOGOUT button if logged in -->
+        <!-- Show CARING TOOL, PROFILE, DASHBOARD (admin only) and LOGOUT button if logged in -->
         <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/tool" class="nav-link custom-nav-link" active-class="active" aria-current="page">CARING TOOL</router-link>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/profile" class="nav-link custom-nav-link" active-class="active" aria-current="page">PROFILE</router-link>
+        </li>
+        <li class="nav-item" v-if="userType === 'admin'">
+          <router-link to="/dashboard" class="nav-link custom-nav-link" active-class="active" aria-current="page">DASHBOARD</router-link>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
           <a href="#" @click.prevent="logout" class="nav-link custom-nav-link">LOGOUT</a>
@@ -50,7 +52,7 @@
 import { useAuth } from './router/useAuth.js';
 import Footer from './components/Footer.vue';
 
-const { isAuthenticated, logout } = useAuth();
+const { isAuthenticated, userType, logout } = useAuth();
 </script>
 
 <style scoped>

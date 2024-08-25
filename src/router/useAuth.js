@@ -1,9 +1,11 @@
 import { ref } from 'vue';
-import router from '../router';
-import { auth } from '../config/firebaseConfig';
+import router from '../router'
+import { doc, getDoc} from 'firebase/firestore';
+import { db, auth } from '../config/firebaseConfig.js';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 const currentUser = ref(null);
+const userType = ref(null);
 const isAuthenticated = ref(false);
 
 onAuthStateChanged(auth, (user) => {
@@ -20,8 +22,18 @@ const login = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
     console.log('User logged in:', auth.currentUser);
+
+    // Fetch user type from Firestore
+    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+        userType.value = userDoc.data().userType;
+        console.log('User type:', userType.value);
+    } else {
+        console.error('No such document!');
+    }
     router.push('/profile');
-  } catch (error) {
+    } catch (error) {
     console.error('Error logging in:', error.message);
   }
 };
@@ -48,7 +60,7 @@ const logout = async () => {
 };
 
 export function useAuth() {
-  return { isAuthenticated, currentUser, login, loginWithGoogle, logout };
+  return { isAuthenticated, currentUser, userType, login, loginWithGoogle, logout };
 }
 
 

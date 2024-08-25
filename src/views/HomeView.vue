@@ -56,7 +56,7 @@
 
 button.btn-primary-custom {
     border-color: #e5533d;
-    border-width: 4px;
+    border-width: 3px;
     color: #555;
 }
   

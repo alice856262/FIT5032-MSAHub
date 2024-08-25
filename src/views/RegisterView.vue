@@ -4,6 +4,7 @@
       <div class="col-md-8 offset-md-2">
         <h1 class="display-4 mb-4">Create New Account</h1>
         <form @submit.prevent="submitForm">
+          <!-- Form Fields for User Details -->
           <div class="row mb-3">
             <div class="col-md-4 col-sm-4">
               <label for="firstName" class="form-label">First Name *</label>
@@ -36,8 +37,8 @@
             <div class="col-md-6 col-sm-6">
               <label for="email" class="form-label">Email *</label>
               <input type="email" class="form-control" id="email" 
-              @blur = "() => validateEmail(true)"
-              @input = "() => validateEmail(false)"
+              @blur = "validateEmail(true)"
+              @input = "validateEmail(false)"
               v-model="formData.email" />
               <div v-if = "errors.email" class = "text-danger">{{ errors.email }}</div>
             </div>
@@ -50,15 +51,15 @@
             <div class="col-md-6 col-sm-6">
               <label for="password" class="form-label">Password *</label>
               <input type="password" class="form-control" id="password" 
-              @blur = "() => validatePassword(true)"
-              @input = "() => validatePassword(false)"
+              @blur = "validatePassword(true)"
+              @input = "validatePassword(false)"
               v-model="formData.password" />
               <div v-if = "errors.password" class = "text-danger">{{ errors.password }}</div>
             </div>
             <div class="col-md-6 col-sm-6">
               <label for="confirmPassword" class="form-label">Confirm Password *</label>
               <input type="password" class="form-control" id="confirmPassword" 
-              @input = "() => validateConfirmPassword(false)"
+              @input = "validateConfirmPassword(false)"
               v-model="formData.confirmPassword" />
               <div v-if = "errors.confirmPassword" class = "text-danger">{{ errors.confirmPassword }}</div>
             </div>
@@ -88,6 +89,7 @@
               <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
             </div>
           </div>
+          <!-- Submit Button -->
           <div class="row mb-3" style="margin-top: 30px">
             <div class="text-center">
               <button type="submit" class="btn btn-primary me-2">Sign Up</button>
@@ -106,14 +108,15 @@
   
 <script setup>
 import { ref } from 'vue';
+import { auth, db } from '../config/firebaseConfig.js';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 // PrimeVue
 // import DataTable from 'primevue/datatable';
 // import Column from 'primevue/column';
-
-// const booleanTemplate = (rowData) => {
-//   return rowData.isAustralian ? 'Yes' : 'No';
-// }
 
 const formData = ref({
     firstName: '',
@@ -128,22 +131,71 @@ const formData = ref({
     reason: ''
 });
 
-const submittedCards = ref([]);
-
-const submitForm = () => {
+// Form Submission
+const submitForm = async () => {
+  // Validate form fields
   validateFirstName(true);
   validateLastName(true);  
   validateGender();
   validateEmail(true);
   validatePassword(true);
-  validateConfirmPassword(true);
+  validateConfirmPassword();
   validateDob(true);
-  validateReason(true);
+  validateReason();
+  
+  // Check if there are any validation errors
   if (!Object.values(errors.value).some(x => x !== null)) {
-    submittedCards.value.push({ ...formData.value });
-    clearForm();
+    try {
+      // Register the user with Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.value.email,
+        formData.value.password
+      );
+      const user = userCredential.user;
+      const dobAsDate = new Date(formData.value.dob);    // convert dob to a Date object
+
+      console.log("User registered with Firebase. UID:", user.uid);
+
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        firstName: formData.value.firstName,
+        lastName: formData.value.lastName,
+        gender: formData.value.gender,
+        email: formData.value.email,
+        phone: formData.value.phone,
+        dob: dobAsDate,
+        address: formData.value.address,
+        reason: formData.value.reason
+      });
+
+      alert('User registered successfully!');
+      clearForm();
+      router.push('/login');
+    } catch (error) {
+      console.error("Error registering user: ", error);
+      alert('Failed to register. Please try again.');
+    }
+  } else {
+    console.log("Form has validation errors: ", errors.value);  // Debug log
   }
 };
+
+// const submittedCards = ref([]);
+// const submitForm = () => {
+//   validateFirstName(true);
+//   validateLastName(true);  
+//   validateGender();
+//   validateEmail(true);
+//   validatePassword(true);
+//   validateConfirmPassword(true);
+//   validateDob(true);
+//   validateReason(true);
+//   if (!Object.values(errors.value).some(x => x !== null)) {
+//     submittedCards.value.push({ ...formData.value });
+//     clearForm();
+//   }
+// };
 
 const clearForm = () => {
   formData.value = {
@@ -158,6 +210,7 @@ const clearForm = () => {
     address: '',
     reason: ''
   };
+  Object.keys(errors.value).forEach(key => errors.value[key] = null);
 };
 
 const errors = ref({
@@ -240,10 +293,10 @@ const validateConfirmPassword = () => {
 };
 
 const validateDob = (blur) => {
-  if (!formData.value.dateOfBirth) {
-    errors.value.dateOfBirth = "Date of Birth is required.";
+  if (!formData.value.dob) {
+    errors.value.dob = "Date of Birth is required.";
   } else {
-    errors.value.dateOfBirth = null;
+    errors.value.dob = null;
   }
 };
 
