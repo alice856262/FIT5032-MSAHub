@@ -1,44 +1,50 @@
 <template>
-  <div class="container mt-5 custom-container">
+  <div class="container mt-5 mb-5 custom-container">
     <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <h1 class="display-4 mb-4">Login</h1>
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-6 offset-sm-1 offset-md-2 offset-lg-3 offset-xl-3">
+        <h1 class="display-4 mb-4 text-center">Login</h1>
         <form @submit.prevent="handleLogin">
-          <div class="row mb-3">
+          <!-- Email Field -->
+          <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" v-model="email" required />
           </div>
-          <div class="row mb-3">
+          
+          <!-- Password Field -->
+          <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" v-model="password" required />
           </div>
-          <div class="row mb-3" style="margin-top: 30px">
-            <div class="text-center" style="margin-left: 3px">
-              <button type="submit" class="btn btn-primary-login me-2">Login</button>
-            </div>
+
+          <!-- Login Button -->
+          <div class="mb-3 text-center">
+            <button type="submit" class="btn btn-primary-login">Login</button>
           </div>
-          <div class="row mb-3">
-            <div class="text-center">
-              <img src="/src/assets/google_signin.png" alt="Sign in with Google" style="height: 48px; cursor: pointer;" @click="handleGoogleLogin" />
-            </div>
+
+          <!-- Google Sign-in -->
+          <div class="mb-3 text-center">
+            <img src="/src/assets/google_signin.png" alt="Sign in with Google" class="google-signin" @click="handleGoogleLogin" />
           </div>
-          <div class="row mb-3">
-            <div class="text-center">
-              <a href="#" @click.prevent="handleForgotPasswordLinkClick">Forgot Password?</a>
-            </div>
-          </div>          
-          <div class="mb-5">
-            <p class="text-center">Don't have an account? <router-link to="/register">Register here!</router-link></p>
+
+          <!-- Forgot Password Link -->
+          <div class="mb-3 text-center">
+            <a href="#" @click.prevent="handleForgotPasswordLinkClick">Forgot Password?</a>
+          </div>
+          
+          <!-- Register Link -->
+          <div class="text-center">
+            <p>Don't have an account? <router-link to="/register">Register here!</router-link></p>
           </div>
         </form>
       </div>
     </div>
   </div>
-  <br>
+
+  <!-- Forgot Password Modal -->
   <div class="modal" v-if="showForgotPasswordModal">
-    <div class="modal-content mb-4">
-      <h3>Send Reset Password Link</h3>
-      <div class="mt-3 mb-4">
+    <div class="modal-content">
+      <h3 class="mb-4">Send Reset Password Link</h3>
+      <div class="mb-3">
         <input type="email" v-model="resetEmail" placeholder="Enter your email" class="form-control" />
       </div>
       <div class="d-flex justify-content-between">
@@ -107,18 +113,18 @@ const handleForgotPassword = async () => {
 
 <style scoped>
 button.btn-primary-login {
-    color: white;
-    border-radius: 60px;
-    background-color: #e96951;
-    border-color: #333;
-    height: 45px; 
-    width: 210px; 
-    font-weight: bold;
+  color: white;
+  border-radius: 60px;
+  background-color: #e96951;
+  border-color: #333;
+  height: 45px; 
+  width: 210px; 
+  font-weight: bold;
 }
-  
+
 button.btn-primary-login:hover {
-    background-color: #e5533d;
-    border-color: #e5533d;
+  background-color: #e5533d;
+  border-color: #e5533d;
 }
 
 .modal {
@@ -137,7 +143,53 @@ button.btn-primary-login:hover {
   background-color: #ffcf78;
   padding: 30px;
   border-radius: 15px;
-  width: 50%;
+  width: 90%;
+  max-width: 400px;
 }
 
+.google-signin {
+  height: 48px;
+  cursor: pointer;
+}
+
+@media (max-width: 575px) {
+  .container {
+    padding: 15px;
+  }
+
+  .modal-content {
+    width: 100%;
+    padding: 20px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .modal-content {
+    padding: 25px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .container {
+    padding: 25px;
+  }
+
+  .modal-content {
+    padding: 30px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .container {
+    padding: 40px;
+  }
+
+  .modal-content {
+    padding: 35px;
+  }
+}
 </style>
