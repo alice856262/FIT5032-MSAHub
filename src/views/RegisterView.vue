@@ -108,11 +108,13 @@
   
 <script setup>
 import { ref } from 'vue';
+import { useAuth } from '../router/useAuth.js';  // --> Only for Basic Auth
 import { auth, db } from '../config/firebaseConfig.js';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from 'vue-router';
 const router = useRouter();
+const { register } = useAuth();  // --> Only for Basic Auth
 
 // PrimeVue
 // import DataTable from 'primevue/datatable';
@@ -146,6 +148,10 @@ const submitForm = async () => {
   // Check if there are any validation errors
   if (!Object.values(errors.value).some(x => x !== null)) {
     try {
+      // ------- Only for Basic Auth -------
+      register(formData.value);
+      // ------- Only for Basic Auth -------
+
       // Register the user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -158,7 +164,8 @@ const submitForm = async () => {
       console.log("User registered with Firebase. UID:", user.uid);
 
       // Store user data in Firestore
-      await setDoc(doc(db, "users", user.uid), {
+      await setDoc(doc(db, "users", formData.value.email), {  // --> Only for Basic Auth
+      // await setDoc(doc(db, "users", user.uid), {
         firstName: formData.value.firstName,
         lastName: formData.value.lastName,
         gender: formData.value.gender,
@@ -307,6 +314,5 @@ const validateReason = () => {
         errors.value.reason = null;
     }
 };
-
 </script>
   

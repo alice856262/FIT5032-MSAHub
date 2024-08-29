@@ -26,7 +26,8 @@
         <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/profile" class="nav-link custom-nav-link" active-class="active" aria-current="page">PROFILE</router-link>
         </li>
-        <li class="nav-item" v-if="userType === 'admin'">
+        <!-- <li class="nav-item" v-if="userType === 'admin'"> --> 
+        <li class="nav-item" v-if="userType === 'admin@msa.com'">  <!-- Only for Basic Auth -->
           <router-link to="/dashboard" class="nav-link custom-nav-link" active-class="active" aria-current="page">DASHBOARD</router-link>
         </li>
         <li class="nav-item" v-if="isAuthenticated">

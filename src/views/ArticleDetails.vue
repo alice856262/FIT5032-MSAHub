@@ -216,12 +216,15 @@ export default {
     },
     async submitReview() {
       const { currentUser } = useAuth();
-
+      console.log("UserId", currentUser.value.userId);
       if (currentUser && currentUser.value) {
         try {
+          const userEmail = currentUser.value.email; // --> Only for Basic Auth
+
           // Add the new review to Firestore
           await addDoc(collection(db, 'reviews'), {
-            userId: currentUser.value.uid,
+            userId: userEmail, // --> Only for Basic Auth
+            // userId: currentUser.value.uid,
             articleId: this.id,
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
@@ -229,9 +232,22 @@ export default {
             comment: this.newReview.comment,
           });
 
+          // ------- Only for Basic Auth -------
+          // Fetch the user details immediately and update `users` object
+          const userDoc = doc(db, 'users', userEmail);
+          const userSnapshot = await getDoc(userDoc);
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            this.users[userEmail] = userData; // Update the `users` object with the new user data
+          } else {
+            console.error('No user data found for email:', userEmail);
+          }
+          // ------- Only for Basic Auth -------
+
           // Add new review locally to the list
           this.reviews.push({
-            userId: currentUser.value.uid,
+            userId: userEmail, // --> Only for Basic Auth
+            // userId: currentUser.value.uid,
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
             rating: this.newReview.rating,

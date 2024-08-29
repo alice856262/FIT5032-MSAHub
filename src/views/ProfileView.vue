@@ -38,7 +38,8 @@
               <i class="fas fa-edit ms-2"></i>
             </div>
             <div class="col-md-7">
-              <strong>Date of Birth:</strong> {{ user.dob.toLocaleDateString() }}
+              <!-- CHANGE BACK for FIRESTORE <strong>Date of Birth:</strong> {{ user.dob.toLocaleDateString() }} -->
+              <strong>Date of Birth:</strong> {{ user.dob }}
               <i class="fas fa-edit ms-2"></i>
             </div>
           </div>
@@ -73,7 +74,7 @@
           </div>
         </div>
       </div>
-      <button @click="logout" class="btn btn-secondary">Logout</button>
+      <!-- <button @click="logout" class="btn btn-secondary">Logout</button> -->
     </div>
     <!-- Display loading or fallback content if user data is not available -->
     <div v-else>
@@ -86,15 +87,25 @@ import { ref, onMounted } from 'vue';
 import { useAuth } from '../router/useAuth.js';
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig.js';
+import { useRouter } from 'vue-router';
 
 const { logout, currentUser } = useAuth();
 const user = ref(null);
 const userReviews = ref([]);
+const router = useRouter();
 
 onMounted(async () => {
-  if (currentUser.value) {
+  // ------- Only for Basic Auth -------
+  const storedUser = JSON.parse(sessionStorage.getItem('currentUser'));
+  if (storedUser) {
+    user.value = storedUser;
+  // ------- Only for Basic Auth -------
+
+  // if (currentUser.value) {
     try {
-      const userId = currentUser.value.uid;
+      const userId = storedUser.email; // --> Only for Basic Auth
+
+      // const userId = currentUser.value.uid;  --> for Firestore
       console.log('Fetching data for User ID:', userId);
 
       // Fetch user data
