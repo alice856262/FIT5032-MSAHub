@@ -22,11 +22,9 @@
         <button class="btn btn-primary-custom btn-lg">Find More</button>
       </div>
     </div>
-    <!-- <div class="col-md-2 col-sd-2 text-start d-flex justify-content-start" style="padding-right: 10px;"> -->
     <div class="col-ld-2 col-md-3 text-center d-flex justify-content-center mb-4 mb-md-0" style="padding-right: 20px;">
       <div class="photo-placeholder" style="background-color: #ffcf78;">Photo</div>
     </div>
-    <!-- <div class="col-md-4 col-sd-4 text-start d-flex justify-content-start" style="padding-right: 80px;"> -->
     <div class="col-12 col-ld-4 col-md-3 text-center d-flex justify-content-center" style="padding-right: 20px;">  
       <div class="photo-placeholder" style="background-color: #ffcf78;">Photo</div>
     </div>

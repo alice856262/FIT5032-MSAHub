@@ -70,56 +70,56 @@ export default {
 };
 </script>
   
-  <style scoped>
-  .category-section {
-    margin-bottom: 30px;
-  }
-  
-  .list-group-item {
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: #f6f4f3;
-    font-family: 'Arial', sans-serif;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .list-group-item a {
-    color: #333;
-    text-decoration: none;
-    flex-grow: 1;
-  }
-  
-  .list-group-item a:hover {
-    color: #e5533d;
-  }
-  
-  .list-group-item:hover {
-    background-color: #ffcf78;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .list-group-item::before {
-    content: "📄";
-    margin-right: 15px;
-    font-size: 24px;
-  }
-  
-  h2 {
-    font-family: 'Arial', sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .container {
+<style scoped>
+.category-section {
+  margin-bottom: 30px;
+}
+
+.list-group-item {
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f6f4f3;
+  font-family: 'Arial', sans-serif;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.list-group-item a {
+  color: #333;
+  text-decoration: none;
+  flex-grow: 1;
+}
+
+.list-group-item a:hover {
+  color: #e5533d;
+}
+
+.list-group-item:hover {
+  background-color: #ffcf78;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item::before {
+  content: "📄";
+  margin-right: 15px;
+  font-size: 24px;
+}
+
+h2 {
+  font-family: 'Arial', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.container {
     max-width: 800px;
-  }
-  </style>
+}
+</style>
   

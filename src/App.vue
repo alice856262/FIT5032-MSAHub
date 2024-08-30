@@ -19,13 +19,14 @@
         <li class="nav-item">
           <router-link to="/community" class="nav-link custom-nav-link" active-class="active" aria-current="page">COMMUNITY</router-link>
         </li>
-        <!-- Show CARING TOOL, PROFILE, DASHBOARD (admin only) and LOGOUT button if logged in -->
+        <!-- Show CARING TOOL, PROFILE and LOGOUT button if logged in -->
         <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/tool" class="nav-link custom-nav-link" active-class="active" aria-current="page">CARING TOOL</router-link>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/profile" class="nav-link custom-nav-link" active-class="active" aria-current="page">PROFILE</router-link>
         </li>
+        <!-- Show DASHBOARD only if admin logged in -->
         <!-- <li class="nav-item" v-if="userType === 'admin'"> --> 
         <li class="nav-item" v-if="userType === 'admin@msa.com'">  <!-- Only for Basic Auth -->
           <router-link to="/dashboard" class="nav-link custom-nav-link" active-class="active" aria-current="page">DASHBOARD</router-link>
@@ -87,7 +88,7 @@ header {
 }
 
 .custom-nav-link.active {
-  background-color: #e5533d; /* Optional: Differentiate the active state */
+  background-color: #e5533d;
 }
 
 @media (max-width: 575px) {

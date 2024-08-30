@@ -62,7 +62,9 @@
       <div class="modal-content">
         <h3>Treatment Planner</h3>
         <p>Use the calendar below to schedule your treatments:</p>
-        <div id="calendar"></div> <!-- Placeholder for a calendar widget -->
+        <div id="calendar">
+          <!-- Placeholder for a calendar widget -->
+        </div>
         <button type="button" class="btn btn-secondary mt-3" @click="closeModal">Close</button>
       </div>
     </div>

@@ -67,7 +67,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Media Queries for Responsiveness */
 @media (max-width: 575px) {
   .container {
     padding: 15px;

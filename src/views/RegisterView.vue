@@ -198,25 +198,9 @@ const submitForm = async () => {
       alert('Failed to register. Please try again.');
     }
   } else {
-    console.log("Form has validation errors: ", errors.value);  // Debug log
+    console.log("Form has validation errors: ", errors.value);
   }
 };
-
-// const submittedCards = ref([]);
-// const submitForm = () => {
-//   validateFirstName(true);
-//   validateLastName(true);  
-//   validateGender();
-//   validateEmail(true);
-//   validatePassword(true);
-//   validateConfirmPassword(true);
-//   validateDob(true);
-//   validateReason(true);
-//   if (!Object.values(errors.value).some(x => x !== null)) {
-//     submittedCards.value.push({ ...formData.value });
-//     clearForm();
-//   }
-// };
 
 const clearForm = () => {
   formData.value = {

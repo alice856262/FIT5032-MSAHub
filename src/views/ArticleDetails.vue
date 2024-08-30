@@ -247,12 +247,12 @@ export default {
           });
 
           // ------- Only for Basic Auth -------
-          // Fetch the user details immediately and update `users` object
+          // Fetch the user details immediately and update "users" object
           const userDoc = doc(db, 'users', userEmail);
           const userSnapshot = await getDoc(userDoc);
           if (userSnapshot.exists()) {
             const userData = userSnapshot.data();
-            this.users[userEmail] = userData; // Update the `users` object with the new user data
+            this.users[userEmail] = userData; // Update the "users" object with the new user data
           } else {
             console.error('No user data found for email:', userEmail);
           }

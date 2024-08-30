@@ -54,9 +54,9 @@ const router = useRouter();
 
 // Function to handle joining a forum
 const joinForum = (forumType) => {
-    console.log(`Joining ${forumType} forum...`);
-    // You can navigate to a forum-specific route or handle joining logic here
-    router.push({ path: `community/${forumType}` });
+    console.log("Joining ${forumType} forum...");
+    // Navigate to a forum-specific route
+    router.push({ path: "community/${forumType}" });
 };
 </script>
 

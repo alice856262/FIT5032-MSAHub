@@ -76,7 +76,7 @@
       </div>
       <!-- <button @click="logout" class="btn btn-secondary">Logout</button> -->
     </div>
-    <!-- Display loading or fallback content if user data is not available -->
+    <!-- Display loading if user data is not available -->
     <div v-else>
       <p>Loading...</p>
     </div>
