@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container mt-3">
     <div class="row justify-content-center">
       <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
         <h1>About MSA</h1>

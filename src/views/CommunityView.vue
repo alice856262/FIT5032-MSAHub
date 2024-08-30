@@ -1,5 +1,5 @@
 <template>
-    <div class="container mt-5">
+    <div class="container mt-3">
       <h1 class="mb-4">Community Forums</h1>
       <p>Join a forum to connect with others in your community:</p>
   
@@ -8,7 +8,7 @@
         <div class="col-md-4">
           <div class="card forum-card">
             <div class="card-body">
-              <h5 class="card-title">Patient Forum</h5>
+              <h5 class="card-title">💬 Patient Forum</h5>
               <p class="card-text">
                 Connect with other MSA patients to share experiences, support, and resources.
               </p>
@@ -21,7 +21,7 @@
         <div class="col-md-4">
           <div class="card forum-card">
             <div class="card-body">
-              <h5 class="card-title">Caregiver Forum</h5>
+              <h5 class="card-title">💬 Caregiver Forum</h5>
               <p class="card-text">
                 Join the caregiver community to share advice, resources, and support.
               </p>
@@ -34,7 +34,7 @@
         <div class="col-md-4">
           <div class="card forum-card">
             <div class="card-body">
-              <h5 class="card-title">Professional Forum</h5>
+              <h5 class="card-title">💬 Professional Forum</h5>
               <p class="card-text">
                 Engage with other professionals and share your expertise and insights.
               </p>

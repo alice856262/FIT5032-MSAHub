@@ -1,12 +1,12 @@
 <template>
   <div id="app" style="margin-left: 10px; margin-right: 10px;">
-    <header class="d-flex justify-content-between align-items-center py-3">
-      <div class="d-flex align-items-center" style="width: 250px; margin-left: 35px;">
+    <header class="d-flex justify-content-between align-items-center py-3" style="margin-left: 35px;">
+      <div class="d-flex align-items-center" style="width: 250px">
         <a href="/">
           <img src="./assets/MSA_Hub_logo.png" alt="MSA Hub" style="height: 50px;">
         </a>
       </div>
-      <ul class="nav nav-pills" style="margin-right: 20px;">
+      <ul class="nav nav-pills me-3 flex-wrap" style="margin-right: 20px;">
         <li class="nav-item">
           <router-link to="/" class="nav-link custom-nav-link" active-class="active" aria-current="page">HOME</router-link>
         </li>
@@ -66,6 +66,12 @@ header {
   margin: 0 auto 2rem;
 }
 
+.nav-pills {
+  flex-wrap: wrap;
+  padding: 0;
+  list-style: none;
+}
+
 .custom-nav-link {
   color: #333;
   padding: 8px 16px;
@@ -84,25 +90,53 @@ header {
   background-color: #e5533d; /* Optional: Differentiate the active state */
 }
 
-.nav-item {
-  margin-right: 20px; /* Adds spacing between the nav items */
+@media (max-width: 575px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+  }
+  .nav-pills {
+    flex-direction: column;
+    text-align: center;
+  }
+  .nav-item {
+    margin-right: 5px; 
+  }
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+@media (min-width: 576px) and (max-width: 768px) {
+  .nav-pills {
+    justify-content: center;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
+  .nav-link {
+    padding: 5px 20px;
   }
+  .nav-item {
+    margin-right: 5px; 
+  }
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+@media (min-width: 768px) and (max-width: 1200px) {
+  .nav-pills {
+    justify-content: right;
+  }
+  .nav-link {
+    padding: 5px 20px;
+  }
+  .nav-item {
+    margin-right: 5px; 
+  }
+}
+
+@media (min-width: 1200px) {
+  .nav-pills {
+    justify-content: right;
+  }
+  .nav-link {
+    padding: 10px 30px;
+  }
+  .nav-item {
+    margin-right: 10px;
   }
 }
 </style>

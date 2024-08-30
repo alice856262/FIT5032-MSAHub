@@ -8,7 +8,7 @@
       <div class="col-md-6">
         <div class="card caring-tool-card">
           <div class="card-body">
-            <h5 class="card-title">Symptom Tracker</h5>
+            <h5 class="card-title">📝 Symptom Tracker</h5>
             <p class="card-text">
               Track your symptoms daily to monitor changes and progress over time.
             </p>
@@ -21,7 +21,7 @@
       <div class="col-md-6">
         <div class="card caring-tool-card">
           <div class="card-body">
-            <h5 class="card-title">Treatment Planner</h5>
+            <h5 class="card-title">⏰ Treatment Planner</h5>
             <p class="card-text">
               Plan your treatments and medication schedule using the calendar.
             </p>

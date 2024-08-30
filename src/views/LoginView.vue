@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5 mb-5 custom-container">
+  <div class="container mt-3 mb-5 custom-container">
     <div class="row">
       <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-6 offset-sm-1 offset-md-2 offset-lg-3 offset-xl-3">
         <h1 class="display-4 mb-4 text-center">Login</h1>

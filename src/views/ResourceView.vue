@@ -1,5 +1,5 @@
 <template>
-    <div class="container mt-5">
+    <div class="container mt-3">
       <h1 class="mb-4">Resources</h1>
   
       <!-- Educational Materials Section -->

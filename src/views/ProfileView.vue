@@ -20,35 +20,35 @@
         </div>
         
         <!-- Right Side: Personal Info -->
-        <div class="col-md-8">
+        <div class="col-md-8 col-sd-12">
           <h2 class="mb-4">Personal Info</h2>
           <div class="row mb-3">
-            <div class="col-md-5">
+            <div class="col-5">
               <strong>First Name:</strong> {{ user.firstName }}
               <i class="fas fa-edit ms-2"></i>
             </div>
-            <div class="col-md-7">
+            <div class="col-7">
               <strong>Phone Number:</strong> {{ user.phone }}
               <i class="fas fa-edit ms-2"></i>
             </div>
           </div>
           <div class="row mb-3">
-            <div class="col-md-5">
+            <div class="col-5">
               <strong>Last Name:</strong> {{ user.lastName }}
               <i class="fas fa-edit ms-2"></i>
             </div>
-            <div class="col-md-7">
+            <div class="col-7">
               <!-- CHANGE BACK for FIRESTORE <strong>Date of Birth:</strong> {{ user.dob.toLocaleDateString() }} -->
               <strong>Date of Birth:</strong> {{ user.dob }}
               <i class="fas fa-edit ms-2"></i>
             </div>
           </div>
           <div class="row mb-3">
-            <div class="col-md-5">
+            <div class="col-5">
               <strong>Gender:</strong> {{ user.gender }}
               <i class="fas fa-edit ms-2"></i>
             </div>
-            <div class="col-md-7">
+            <div class="col-7">
               <strong>Address:</strong> {{ user.address }}
               <i class="fas fa-edit ms-2"></i>
             </div>
@@ -203,6 +203,4 @@ onMounted(async () => {
 .review-text {
     font-size: 16px;
 }
-
 </style>
-  

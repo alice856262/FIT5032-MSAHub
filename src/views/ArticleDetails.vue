@@ -1,4 +1,7 @@
 <template>
+  <div class="offset-sd-2 offset-md-2">
+    <button class="btn btn-secondary mb-3" @click="goBack">← Back</button>
+  </div>
   <div class="container article-details">
     <div class="row">
       <div class="col-md-8 col-sd-8">
@@ -129,6 +132,11 @@ import { ref } from 'vue';
 import { collection, getDocs, query, where, doc, getDoc, addDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig.js';
 import { useAuth } from '../router/useAuth.js';
+import DOMPurify from 'dompurify';
+
+function sanitizeInput(input) {
+  return DOMPurify.sanitize(input);
+}
 
 export default {
   props: ['id'],
@@ -170,6 +178,9 @@ export default {
     this.fetchArticleData();
   },
   methods: {
+    sanitize(content) {
+      return DOMPurify.sanitize(content);
+    },
     async fetchArticleData() {
       try {
         // Fetch article details
@@ -221,6 +232,9 @@ export default {
         try {
           const userEmail = currentUser.value.email; // --> Only for Basic Auth
 
+          // Sanitize user input
+          const sanitizedComment = sanitizeInput(this.newReview.comment);
+
           // Add the new review to Firestore
           await addDoc(collection(db, 'reviews'), {
             userId: userEmail, // --> Only for Basic Auth
@@ -229,7 +243,7 @@ export default {
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
             rating: this.newReview.rating,
-            comment: this.newReview.comment,
+            comment: sanitizedComment,
           });
 
           // ------- Only for Basic Auth -------
@@ -251,7 +265,7 @@ export default {
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
             rating: this.newReview.rating,
-            comment: this.newReview.comment
+            comment: sanitizedComment
           });
 
           this.closeModal();
@@ -284,6 +298,9 @@ export default {
     },
     formatDate(date) {
       return new Date(date).toLocaleDateString(); // Ensure it's a JS Date object
+    },
+    goBack() {
+      this.$router.push('/resource');
     }
   }
 };

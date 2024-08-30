@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5 custom-container">
+  <div class="container mt-3 custom-container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="display-4 mb-4">Create New Account</h1>
@@ -79,7 +79,7 @@
           </div>
           <div class="row mb-3">
             <div class="col-md-6 col-sm-6">
-              <label for="reason" class="form-label">Main reason for joining MSA Hub *</label>
+              <label for="reason" class="form-label">Main Reason for Joining Us *</label>
               <select class="form-select" id="reason" v-model="formData.reason" @change="validateReason">
                 <option value="" disabled>Select your reason</option>
                 <option value="patient">I'm a MSA Patient</option>
@@ -103,7 +103,6 @@
       </div>
     </div>
   </div>
-  <br>
 </template>
   
 <script setup>
@@ -113,6 +112,8 @@ import { auth, db } from '../config/firebaseConfig.js';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useRouter } from 'vue-router';
+import DOMPurify from 'dompurify';
+
 const router = useRouter();
 const { register } = useAuth();  // --> Only for Basic Auth
 
@@ -148,6 +149,19 @@ const submitForm = async () => {
   // Check if there are any validation errors
   if (!Object.values(errors.value).some(x => x !== null)) {
     try {
+      // Sanitize input fields
+      const sanitizedData = {
+        firstName: DOMPurify.sanitize(formData.value.firstName),
+        lastName: DOMPurify.sanitize(formData.value.lastName),
+        gender: DOMPurify.sanitize(formData.value.gender),
+        email: DOMPurify.sanitize(formData.value.email),
+        phone: DOMPurify.sanitize(formData.value.phone),
+        password: formData.value.password,  // Passwords should not be sanitized to maintain security of the hashing
+        dob: new Date(formData.value.dob),  // Date objects should be parsed
+        address: DOMPurify.sanitize(formData.value.address),
+        reason: DOMPurify.sanitize(formData.value.reason)
+      };
+
       // ------- Only for Basic Auth -------
       register(formData.value);
       // ------- Only for Basic Auth -------
@@ -155,8 +169,8 @@ const submitForm = async () => {
       // Register the user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        formData.value.email,
-        formData.value.password
+        sanitizedData.email,
+        sanitizedData.password
       );
       const user = userCredential.user;
       const dobAsDate = new Date(formData.value.dob);    // convert dob to a Date object
@@ -166,14 +180,14 @@ const submitForm = async () => {
       // Store user data in Firestore
       await setDoc(doc(db, "users", formData.value.email), {  // --> Only for Basic Auth
       // await setDoc(doc(db, "users", user.uid), {
-        firstName: formData.value.firstName,
-        lastName: formData.value.lastName,
-        gender: formData.value.gender,
-        email: formData.value.email,
-        phone: formData.value.phone,
+        firstName: sanitizedData.firstName,
+        lastName: sanitizedData.lastName,
+        gender: sanitizedData.gender,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone,
         dob: dobAsDate,
-        address: formData.value.address,
-        reason: formData.value.reason
+        address: sanitizedData.address,
+        reason: sanitizedData.reason
       });
 
       alert('User registered successfully!');
