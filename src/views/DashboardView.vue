@@ -80,13 +80,13 @@ const fetchUserStatistics = async () => {
       }
       typesCount[userType]++;
     });
-
     userTypesCount.value = typesCount;
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
 };
 
+// Call fetchUserStatistics() when the component is mounted
 onMounted(() => {
   fetchUserStatistics();
 });

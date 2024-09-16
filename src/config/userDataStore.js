@@ -4,8 +4,8 @@ const userDataStore = JSON.parse(localStorage.getItem('userData')) || {};
 // Save user data to local storage
 const saveUserData = (email, data) => {
     userDataStore[email] = {
-      ...data,
-      userId: data.userId || email // Ensure userId is set
+      ...data,  // the spread operator (...data) copies all properties from the data object
+      userId: data.userId || email  // ensure userId is set
     };
     localStorage.setItem('userData', JSON.stringify(userDataStore));
 };

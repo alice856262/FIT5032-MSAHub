@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="display-4 mb-4">Create New Account</h1>
-        <form @submit.prevent="submitForm">
+        <form @submit.prevent="submitForm">  <!-- .prevent: prevents browser reloads page when the form is submitted -->
           <!-- Form Fields for User Details -->
           <div class="row mb-3">
             <div class="col-md-4 col-sm-4">
@@ -107,7 +107,7 @@
   
 <script setup>
 import { ref } from 'vue';
-import { useAuth } from '../router/useAuth.js';  // --> Only for Basic Auth
+// import { useAuth } from '../router/useAuth.js';  // --> Only for Basic Auth
 import { auth, db } from '../config/firebaseConfig.js';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -115,7 +115,7 @@ import { useRouter } from 'vue-router';
 import DOMPurify from 'dompurify';
 
 const router = useRouter();
-const { register } = useAuth();  // --> Only for Basic Auth
+// const { register } = useAuth();  // --> Only for Basic Auth
 
 // PrimeVue
 // import DataTable from 'primevue/datatable';
@@ -162,9 +162,10 @@ const submitForm = async () => {
         reason: DOMPurify.sanitize(formData.value.reason)
       };
 
-      // ------- Only for Basic Auth -------
-      register(formData.value);
-      // ------- Only for Basic Auth -------
+      // // ------- Only for Basic Auth -------
+      // // Call register() from useAuth
+      // register(formData.value);
+      // // ------- Only for Basic Auth -------
 
       // Register the user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
@@ -178,8 +179,8 @@ const submitForm = async () => {
       console.log("User registered with Firebase. UID:", user.uid);
 
       // Store user data in Firestore
-      await setDoc(doc(db, "users", formData.value.email), {  // --> Only for Basic Auth
-      // await setDoc(doc(db, "users", user.uid), {
+      // await setDoc(doc(db, "users", formData.value.email), {  // --> Only for Basic Auth
+      await setDoc(doc(db, "users", user.uid), {
         firstName: sanitizedData.firstName,
         lastName: sanitizedData.lastName,
         gender: sanitizedData.gender,
@@ -187,7 +188,8 @@ const submitForm = async () => {
         phone: sanitizedData.phone,
         dob: dobAsDate,
         address: sanitizedData.address,
-        reason: sanitizedData.reason
+        reason: sanitizedData.reason,
+        userType: "general"
       });
 
       alert('User registered successfully!');

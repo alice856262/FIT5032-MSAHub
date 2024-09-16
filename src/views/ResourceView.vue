@@ -63,6 +63,7 @@ export default {
         }
       };
   
+      // Use the onMounted lifecycle hook to call fetchArticles when the component is mounted
       onMounted(fetchArticles);
   
       return { educationalMaterials, caregivingResources };
@@ -97,6 +98,7 @@ export default {
 
 .list-group-item a:hover {
   color: #e5533d;
+  font-weight: bold;
 }
 
 .list-group-item:hover {

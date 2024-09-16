@@ -32,7 +32,7 @@
     </div>
 
     <!-- Modal for Symptom Tracker -->
-    <div v-if="showSymptomTracker" class="modal" @click.self="closeModal">
+    <div v-if="showSymptomTracker" class="modal" @click.self="closeModal">  <!-- call closeModal() only if the .modal element itself is clicked -->
       <div class="modal-content">
         <h3>Symptom Tracker</h3>
         <form @submit.prevent="addSymptomEntry">

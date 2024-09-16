@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-6 offset-sm-1 offset-md-2 offset-lg-3 offset-xl-3">
         <h1 class="display-4 mb-4 text-center">Login</h1>
-        <form @submit.prevent="handleLogin">
+        <form @submit.prevent="handleLogin">  <!-- .prevent: prevents browser reloads page when the form is submitted -->
           <!-- Email Field -->
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
@@ -56,63 +56,64 @@
 </template>
 
 <script setup>
-// ------- Only for Basic Auth -------
-import { ref } from 'vue';
-import { useAuth } from '../router/useAuth.js';
-
-const email = ref('');
-const password = ref('');
-const { login } = useAuth();
-
-const handleLogin = async () => {
-  console.log('Login initiated...');
-  await login(email.value, password.value);
-};
-// ------ Only for Basic Auth -------
-
-// Firebase
+// // ------- Only for Basic Auth -------
 // import { ref } from 'vue';
 // import { useAuth } from '../router/useAuth.js';
-// import { auth } from '../config/firebaseConfig.js';
-// import { sendPasswordResetEmail } from 'firebase/auth';
 
 // const email = ref('');
 // const password = ref('');
-// const { login, loginWithGoogle } = useAuth();
-// const showForgotPasswordModal = ref(false);
-// const resetEmail = ref('');
+// const { login } = useAuth();
 
+// // Call login() from useAuth, passing the email and password values
 // const handleLogin = async () => {
+//   console.log('Login initiated...');
 //   await login(email.value, password.value);
 // };
+// // ------ Only for Basic Auth -------
 
-// const handleGoogleLogin = async () => {
-//   await loginWithGoogle();
-// };
+// Firebase
+import { ref } from 'vue';
+import { useAuth } from '../router/useAuth.js';
+import { auth } from '../config/firebaseConfig.js';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
-// const handleForgotPasswordLinkClick = () => {
-//   showForgotPasswordModal.value = true; // This sets the variable to true, showing the modal
-// };
+const email = ref('');
+const password = ref('');
+const { login, loginWithGoogle } = useAuth();
+const showForgotPasswordModal = ref(false);
+const resetEmail = ref('');
 
-// const closeForgotPasswordModal = () => {
-//   showForgotPasswordModal.value = false; // This sets the variable to false, hiding the modal
-// };
+const handleLogin = async () => {
+  await login(email.value, password.value);
+};
 
-// // Function to handle forgot password
-// const handleForgotPassword = async () => {
-//   if (!resetEmail.value) {
-//     alert('Please enter your email.');
-//     return;
-//   }
+const handleGoogleLogin = async () => {
+  await loginWithGoogle();
+};
 
-//   try {
-//     await sendPasswordResetEmail(auth, resetEmail.value);
-//     alert('Password reset email sent!');
-//     showForgotPasswordModal.value = false;
-//   } catch (error) {
-//     console.error('Error sending password reset email:', error.message);
-//   }
-// };
+const handleForgotPasswordLinkClick = () => {
+  showForgotPasswordModal.value = true; // This sets the variable to true, showing the modal
+};
+
+const closeForgotPasswordModal = () => {
+  showForgotPasswordModal.value = false; // This sets the variable to false, hiding the modal
+};
+
+// Function to handle forgot password
+const handleForgotPassword = async () => {
+  if (!resetEmail.value) {
+    alert('Please enter your email.');
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(auth, resetEmail.value);
+    alert('Password reset email sent!');
+    showForgotPasswordModal.value = false;
+  } catch (error) {
+    console.error('Error sending password reset email:', error.message);
+  }
+};
 </script>
 
 <style scoped>

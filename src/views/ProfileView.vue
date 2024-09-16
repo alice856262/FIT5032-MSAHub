@@ -23,34 +23,61 @@
         <div class="col-md-8 col-sd-12">
           <h2 class="mb-4">Personal Info</h2>
           <div class="row mb-3">
-            <div class="col-5">
-              <strong>First Name:</strong> {{ user.firstName }}
-              <i class="fas fa-edit ms-2"></i>
+            <div class="col-5 d-flex align-items-center justify-content-between">
+              <strong>First Name:</strong>
+              <span class="ms-3" v-if="!editing.firstName">{{ user.firstName }}</span>
+              <input v-if="editing.firstName" v-model="user.firstName" class="form-control" />
+              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('firstName')">
+                {{ editing.firstName ? '✔️' : '🖊️' }}
+              </span>
             </div>
-            <div class="col-7">
-              <strong>Phone Number:</strong> {{ user.phone }}
-              <i class="fas fa-edit ms-2"></i>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-5">
-              <strong>Last Name:</strong> {{ user.lastName }}
-              <i class="fas fa-edit ms-2"></i>
-            </div>
-            <div class="col-7">
-              <!-- CHANGE BACK for FIRESTORE <strong>Date of Birth:</strong> {{ user.dob.toLocaleDateString() }} -->
-              <strong>Date of Birth:</strong> {{ user.dob }}
-              <i class="fas fa-edit ms-2"></i>
+            <div class="col-7 d-flex align-items-center justify-content-between">
+              <strong>Phone Number:</strong>
+              <span class="ms-3" v-if="!editing.phone">{{ user.phone }}</span>
+              <input v-if="editing.phone" v-model="user.phone" class="form-control" />
+              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('phone')">
+                {{ editing.phone ? '✔️' : '🖊️' }}
+              </span>
             </div>
           </div>
           <div class="row mb-3">
-            <div class="col-5">
-              <strong>Gender:</strong> {{ user.gender }}
-              <i class="fas fa-edit ms-2"></i>
+            <div class="col-5 d-flex align-items-center justify-content-between">
+              <strong>Last Name:</strong>
+              <span class="ms-3" v-if="!editing.lastName">{{ user.lastName }}</span>
+              <input v-if="editing.lastName" v-model="user.lastName" class="form-control" />
+              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('lastName')">
+                {{ editing.lastName ? '✔️' : '🖊️' }}
+              </span>
             </div>
-            <div class="col-7">
-              <strong>Address:</strong> {{ user.address }}
-              <i class="fas fa-edit ms-2"></i>
+            <div class="col-7 d-flex align-items-center justify-content-between">
+              <strong>Date of Birth:</strong>
+              <span class="ms-3" v-if="!editing.dob">{{ user.dob.toLocaleDateString() }}</span>
+              <input v-if="editing.dob" type="date" v-model="user.dob" class="form-control" />
+              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('dob')">
+                {{ editing.dob ? '✔️' : '🖊️' }}
+              </span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-5 d-flex align-items-center justify-content-between">
+              <strong>Gender:</strong>
+              <span class="ms-3" v-if="!editing.gender">{{ user.gender }}</span>
+              <select v-if="editing.gender" v-model="user.gender" class="form-select">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('gender')">
+                {{ editing.gender ? '✔️' : '🖊️' }}
+              </span>
+            </div>
+            <div class="col-7 d-flex align-items-center justify-content-between">
+              <strong>Address:</strong>
+              <span class="ms-3" v-if="!editing.address">{{ user.address }}</span>
+              <input v-if="editing.address" v-model="user.address" class="form-control" />
+              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('address')">
+                {{ editing.address ? '✔️' : '🖊️' }}
+              </span>
             </div>
           </div>
         </div>
@@ -77,7 +104,7 @@
       <!-- <button @click="logout" class="btn btn-secondary">Logout</button> -->
     </div>
     <!-- Display loading if user data is not available -->
-    <div v-else>
+    <div v-else>  <!-- Fallback content: if the user object is not yet loaded, a loading message is displayed -->
       <p>Loading...</p>
     </div>
 </template>
@@ -85,7 +112,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuth } from '../router/useAuth.js';
-import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig.js';
 import { useRouter } from 'vue-router';
 
@@ -94,18 +121,57 @@ const user = ref(null);
 const userReviews = ref([]);
 const router = useRouter();
 
-onMounted(async () => {
-  // ------- Only for Basic Auth -------
-  const storedUser = JSON.parse(sessionStorage.getItem('currentUser'));
-  if (storedUser) {
-    user.value = storedUser;
-  // ------- Only for Basic Auth -------
+// State to manage which field is being edited
+const editing = ref({
+  firstName: false,
+  lastName: false,
+  phone: false,
+  dob: false,
+  gender: false,
+  address: false
+});
 
-  // if (currentUser.value) {
+const toggleEditMode = (field) => {
+  editing.value[field] = !editing.value[field];
+
+  if (!editing.value[field]) {
+    // Convert dob to Date object when exiting edit mode if field is 'dob'
+    if (field === 'dob' && typeof user.value.dob === 'string') {
+      user.value.dob = new Date(user.value.dob);
+    }
+    // Save changes when exiting edit mode
+    saveUserChanges();
+  }
+};
+
+const saveUserChanges = async () => {
+  if (currentUser.value) {
     try {
-      const userId = storedUser.email; // --> Only for Basic Auth
+      const userId = currentUser.value.uid;  // for Firestore
+      const userDocRef = doc(db, 'users', userId);
+      
+      // Update the Firestore document with the new user data
+      await updateDoc(userDocRef, user.value);
+      console.log('User data updated successfully');
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  }
+};
 
-      // const userId = currentUser.value.uid;  --> for Firestore
+onMounted(async () => {
+  // // ------- Only for Basic Auth -------
+  // // Retrieve stored user data from sessionStorage and set it as user
+  // const storedUser = JSON.parse(sessionStorage.getItem('currentUser'));
+  // if (storedUser) {
+  //   user.value = storedUser;
+  // // ------- Only for Basic Auth -------
+
+  if (currentUser.value) {
+    try {
+      // const userId = storedUser.email; // --> Only for Basic Auth
+
+      const userId = currentUser.value.uid;  // for Firestore
       console.log('Fetching data for User ID:', userId);
 
       // Fetch user data

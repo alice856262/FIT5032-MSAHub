@@ -1,19 +1,25 @@
 <template>
-  <div class="offset-sd-2 offset-md-2">
+  <div class="offset-sd-1 offset-md-1">
     <button class="btn btn-secondary mb-3" @click="goBack">← Back</button>
   </div>
   <div class="container article-details">
     <div class="row">
+      <h1 class="article-title">{{ article.title }}</h1>
       <div class="col-md-8 col-sd-8">
-        <h1 class="article-title">{{ article.title }}</h1>
         <p class="article-text">{{ article.content }}</p>
         <ul class="article-points">
           <li v-for="point in article.points" :key="point">{{ point }}</li>
         </ul>
-        <button class="btn btn-primary">Read More</button>
       </div>
       <div class="col-md-4 col-sd-4">
         <div class="photo-placeholder">Photo</div>
+      </div>
+      <div class="d-flex justify-content-start">
+        <button class="btn btn-primary">Read More</button>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-outline-secondary me-2" @click="downloadCSV">Download as CSV</button>
+        <button class="btn btn-outline-secondary" @click="downloadPDF">Download as PDF</button>
       </div>
 
       <div class="col-md-12">
@@ -102,6 +108,7 @@
         <div class="form-group">
           <label>Rate this article</label>
           <div class="star-rating">
+            <!-- If star is less than or equal to newReview.rating, the active class is applied (change the star's appearance by highlighting it) -->
             <span v-for="star in 5" :key="star" class="star" :class="{ active: star <= newReview.rating }" @click="newReview.rating = star">★</span>
           </div>
         </div>
@@ -133,13 +140,14 @@ import { collection, getDocs, query, where, doc, getDoc, addDoc } from 'firebase
 import { db } from '../config/firebaseConfig.js';
 import { useAuth } from '../router/useAuth.js';
 import DOMPurify from 'dompurify';
+import jsPDF from 'jspdf';
 
 function sanitizeInput(input) {
   return DOMPurify.sanitize(input);
 }
 
 export default {
-  props: ['id'],
+  props: ['id'],  // id is passed from the parent component
   data() {
     return {
       article: {
@@ -174,6 +182,7 @@ export default {
       return this.circumference - (this.recommendationPercentage / 100) * this.circumference;
     }
   },
+  // mounted: a lifecycle hook in Vue that runs after the component has been inserted into the DOM
   mounted() {
     this.fetchArticleData();
   },
@@ -208,7 +217,6 @@ export default {
             this.users[review.userId] = userData; // Directly assign to users object
           }
         }
-
         this.reviews = reviewsData;
       } catch (error) {
         console.error('Error fetching article or review data:', error);
@@ -226,19 +234,19 @@ export default {
       this.showModal = false;
     },
     async submitReview() {
-      const { currentUser } = useAuth();
+      const { currentUser } = useAuth();  // use a custom authentication hook to get the current authenticated user
       console.log("UserId", currentUser.value.userId);
       if (currentUser && currentUser.value) {
         try {
-          const userEmail = currentUser.value.email; // --> Only for Basic Auth
+          // const userEmail = currentUser.value.email; // --> Only for Basic Auth
 
           // Sanitize user input
           const sanitizedComment = sanitizeInput(this.newReview.comment);
 
           // Add the new review to Firestore
           await addDoc(collection(db, 'reviews'), {
-            userId: userEmail, // --> Only for Basic Auth
-            // userId: currentUser.value.uid,
+            // userId: userEmail, // --> Only for Basic Auth
+            userId: currentUser.value.uid,
             articleId: this.id,
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
@@ -246,22 +254,32 @@ export default {
             comment: sanitizedComment,
           });
 
-          // ------- Only for Basic Auth -------
+          // // ------- Only for Basic Auth -------
+          // // Fetch the user details immediately and update "users" object
+          // const userDoc = doc(db, 'users', userEmail);
+          // const userSnapshot = await getDoc(userDoc);
+          // if (userSnapshot.exists()) {
+          //   const userData = userSnapshot.data();
+          //   this.users[userEmail] = userData; // Update the "users" object with the new user data
+          // } else {
+          //   console.error('No user data found for email:', userEmail);
+          // }
+          // // ------- Only for Basic Auth -------
+
           // Fetch the user details immediately and update "users" object
-          const userDoc = doc(db, 'users', userEmail);
+          const userDoc = doc(db, 'users', currentUser.value.uid);
           const userSnapshot = await getDoc(userDoc);
           if (userSnapshot.exists()) {
             const userData = userSnapshot.data();
-            this.users[userEmail] = userData; // Update the "users" object with the new user data
+            this.users[currentUser.value.uid] = userData; // update the "users" object with the new user data
           } else {
-            console.error('No user data found for email:', userEmail);
+            console.error('No user data found for ID:', currentUser.value.uid);
           }
-          // ------- Only for Basic Auth -------
 
           // Add new review locally to the list
           this.reviews.push({
-            userId: userEmail, // --> Only for Basic Auth
-            // userId: currentUser.value.uid,
+            // userId: userEmail, // --> Only for Basic Auth
+            userId: currentUser.value.uid,
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
             rating: this.newReview.rating,
@@ -301,6 +319,83 @@ export default {
     },
     goBack() {
       this.$router.push('/resource');
+    },
+    downloadCSV() {
+      const { isAuthenticated } = useAuth();
+      if (!isAuthenticated.value) {
+        alert('Please log in first!');
+        this.$router.push('/login');
+      } else {
+        // Create CSV content
+        const headers = ['Title', 'Content', 'Points'];
+        const points = `"${this.article.points.join('; ')}"`;
+        const row = [this.article.title, this.article.content, points];
+
+        // Combine headers and row into a CSV string
+        let csvContent = "data:text/csv;charset=utf-8," 
+                          + headers.join(",") + "\n" 
+                          + row.join(",");
+
+        // Create a downloadable link
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `${this.article.title}.csv`);
+        document.body.appendChild(link); // Required for Firefox
+
+        link.click();
+        document.body.removeChild(link); // Clean up
+      }
+    },
+    downloadPDF() {
+      const { isAuthenticated } = useAuth();
+      if (!isAuthenticated.value) {
+        alert('Please log in first!');
+        this.$router.push('/login');
+      } else {
+        const doc = new jsPDF();
+        const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+        let yOffset = 10;
+        const lineHeight = 10;
+        
+        // Set the document title
+        doc.setFontSize(16);
+        doc.text("Article Title: " + this.article.title, 10, yOffset);
+        
+        // Add article content
+        yOffset += lineHeight + 5; // Add space for the next section
+        doc.setFontSize(12);
+        
+        const splitContent = doc.splitTextToSize("Content: " + this.article.content, 190); // Wrap text to fit the page width
+        splitContent.forEach((line) => {
+          if (yOffset + lineHeight > pageHeight - 10) { // Check if content exceeds page height
+            doc.addPage();
+            yOffset = 10; // Reset yOffset for the new page
+          }
+          doc.text(line, 10, yOffset);
+          yOffset += lineHeight;
+        });
+        
+        // Add points with dynamic page breaking
+        yOffset += 5; // Add some space before starting points
+        doc.text("Points:", 10, yOffset);
+        yOffset += lineHeight;
+
+        this.article.points.forEach((point, index) => {
+          const splitPoint = doc.splitTextToSize((index + 1) + ". " + point, 190); // Wrap points text
+          splitPoint.forEach((line) => {
+            if (yOffset + lineHeight > pageHeight - 10) { // Check for page overflow
+              doc.addPage();
+              yOffset = 10; // Reset yOffset for the new page
+            }
+            doc.text(line, 10, yOffset);
+            yOffset += lineHeight;
+          });
+        });
+
+        // Save the document
+        doc.save(`${this.article.title}.pdf`);
+      }  
     }
   }
 };
@@ -398,7 +493,7 @@ export default {
   font-size: 24px;
   color: #555;
   border-radius: 15px;
-  margin-top: 20px;
+  margin-top: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
