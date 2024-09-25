@@ -1,127 +1,58 @@
 <template>
-    <div class="container mt-3">
-      <h1 class="mb-4">Resources</h1>
-  
-      <!-- Educational Materials Section -->
-      <div class="category-section" v-if="educationalMaterials.length > 0">
-        <h2>Educational Materials</h2>
-        <ul class="list-group">
-          <li
-            v-for="article in educationalMaterials"
-            :key="article.id"
-            class="list-group-item"
-          >
-            <router-link :to="`/article/${article.id}`">{{ article.title }}</router-link>
-          </li>
-        </ul>
-      </div>
-  
-      <!-- Caregiving Resources Section -->
-      <div class="category-section mt-5" v-if="caregivingResources.length > 0">
-        <h2>Caregiving Resources</h2>
-        <ul class="list-group">
-          <li
-            v-for="article in caregivingResources"
-            :key="article.id"
-            class="list-group-item"
-          >
-            <router-link :to="`/article/${article.id}`">{{ article.title }}</router-link>
-          </li>
-        </ul>
-      </div>
-    </div>
+  <div class="container mt-3">
+    <h1>Resources</h1>
+    <!-- Interactive Table for All Articles -->
+    <interactive-table :rows="articles" :columns="columns" />
+  </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig.js';
+import InteractiveTable from '../components/InteractiveTable.vue';
 
 export default {
-    setup() {
-      const articles = ref([]);
-      const educationalMaterials = ref([]);
-      const caregivingResources = ref([]);
-  
-      const fetchArticles = async () => {
-        try {
-          const querySnapshot = await getDocs(collection(db, 'articles'));
-  
-          articles.value = querySnapshot.docs.map((doc) => ({
+  components: {
+    InteractiveTable,
+  },
+  setup() {
+    const articles = ref([]);
+    const columns = ref([
+      { key: 'title', label: 'Article Title', searchable: true },
+      { key: 'type', label: 'Article Type', searchable: true },
+      { key: 'time', label: 'Publish Date', searchable: true },
+    ]);
+
+    const fetchArticles = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'articles'));
+        articles.value = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          const formattedTime = data.time ? new Date(data.time.toDate()).toISOString().substring(0, 10) : '';
+          return {
             id: doc.id,
-            ...doc.data(),
-          }));
-  
-          educationalMaterials.value = articles.value.filter(
-            (article) => article.type === 'Educational Materials'
-          );
-          caregivingResources.value = articles.value.filter(
-            (article) => article.type === 'Caregiving Resources'
-          );
-        } catch (error) {
-          console.error('Error fetching articles:', error);
-        }
-      };
-  
-      // Use the onMounted lifecycle hook to call fetchArticles when the component is mounted
-      onMounted(fetchArticles);
-  
-      return { educationalMaterials, caregivingResources };
-    },
+            ...data,
+            time: formattedTime,
+          };
+        });
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      }
+    };
+
+    onMounted(fetchArticles);
+
+    return { articles, columns };
+  },
 };
 </script>
-  
+
 <style scoped>
-.category-section {
-  margin-bottom: 30px;
-}
-
-.list-group-item {
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background-color: #f6f4f3;
-  font-family: 'Arial', sans-serif;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-}
-
-.list-group-item a {
-  color: #333;
-  text-decoration: none;
-  flex-grow: 1;
-}
-
-.list-group-item a:hover {
-  color: #e5533d;
-  font-weight: bold;
-}
-
-.list-group-item:hover {
-  background-color: #ffcf78;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.list-group-item::before {
-  content: "📄";
-  margin-right: 15px;
-  font-size: 24px;
-}
-
-h2 {
-  font-family: 'Arial', sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
-}
-
 .container {
-    max-width: 800px;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
-  

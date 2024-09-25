@@ -6,22 +6,22 @@
     <div class="row">
       <h1 class="article-title">{{ article.title }}</h1>
       <div class="col-md-8 col-sd-8">
-        <p class="article-text">{{ article.content }}</p>
-        <ul class="article-points">
-          <li v-for="point in article.points" :key="point">{{ point }}</li>
-        </ul>
+        <!-- Use v-html to render the truncated or full content based on showFullContent state -->
+        <div class="article-text" v-html="sanitizedContent"></div>
       </div>
       <div class="col-md-4 col-sd-4">
         <div class="photo-placeholder">Photo</div>
       </div>
       <div class="d-flex justify-content-start">
-        <button class="btn btn-primary">Read More</button>
+        <!-- Toggle the 'showFullContent' state on button click -->
+        <button class="btn btn-primary" @click="toggleContent">{{ showFullContent ? "Show Less" : "Read More" }}</button>
       </div>
       <div class="d-flex justify-content-end">
         <button class="btn btn-outline-secondary me-2" @click="downloadCSV">Download as CSV</button>
         <button class="btn btn-outline-secondary" @click="downloadPDF">Download as PDF</button>
       </div>
 
+      <!-- Other code remains the same -->
       <div class="col-md-12">
         <!-- Rating Section -->
         <div class="rating-section d-flex align-items-center">
@@ -163,6 +163,7 @@ export default {
         recommend: null,
         comment: ''
       },
+      showFullContent: false, // Track whether to show full content or not
       radius: 90,
       circumference: 2 * Math.PI * 90,
     };
@@ -180,9 +181,16 @@ export default {
     },
     strokeDashoffset() {
       return this.circumference - (this.recommendationPercentage / 100) * this.circumference;
+    },
+    truncatedContent() {
+      const maxLength = 200; // Define the max length for summary
+      const rawContent = this.article.content.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags for accurate truncation
+      return rawContent.length > maxLength ? rawContent.substring(0, maxLength) + '...' : rawContent;
+    },
+    sanitizedContent() {
+      return this.sanitize(this.showFullContent ? this.article.content : this.truncatedContent);
     }
   },
-  // mounted: a lifecycle hook in Vue that runs after the component has been inserted into the DOM
   mounted() {
     this.fetchArticleData();
   },
@@ -196,7 +204,18 @@ export default {
         const articleDoc = doc(db, 'articles', this.id);
         const articleSnapshot = await getDoc(articleDoc);
         if (articleSnapshot.exists()) {
-          this.article = articleSnapshot.data();
+          const articleData = articleSnapshot.data();
+
+          // Add points to the content as a formatted list
+          const pointsList = articleData.points
+            ? '<ul>' + articleData.points.map((point) => `<li>${point}</li>`).join('') + '</ul>'
+            : '';
+
+          // Combine content with points list
+          this.article = {
+            ...articleData,
+            content: `${articleData.content} ${pointsList}`
+          };
         }
 
         // Fetch reviews for this article
@@ -222,6 +241,9 @@ export default {
         console.error('Error fetching article or review data:', error);
       }
     },
+    toggleContent() {
+      this.showFullContent = !this.showFullContent;
+    },
     handleAddReview() {
       const { isAuthenticated } = useAuth();
       if (!isAuthenticated.value) {
@@ -234,18 +256,13 @@ export default {
       this.showModal = false;
     },
     async submitReview() {
-      const { currentUser } = useAuth();  // use a custom authentication hook to get the current authenticated user
-      console.log("UserId", currentUser.value.userId);
+      const { currentUser } = useAuth();
       if (currentUser && currentUser.value) {
         try {
-          // const userEmail = currentUser.value.email; // --> Only for Basic Auth
-
-          // Sanitize user input
           const sanitizedComment = sanitizeInput(this.newReview.comment);
 
           // Add the new review to Firestore
           await addDoc(collection(db, 'reviews'), {
-            // userId: userEmail, // --> Only for Basic Auth
             userId: currentUser.value.uid,
             articleId: this.id,
             date: new Date(),
@@ -253,18 +270,6 @@ export default {
             rating: this.newReview.rating,
             comment: sanitizedComment,
           });
-
-          // // ------- Only for Basic Auth -------
-          // // Fetch the user details immediately and update "users" object
-          // const userDoc = doc(db, 'users', userEmail);
-          // const userSnapshot = await getDoc(userDoc);
-          // if (userSnapshot.exists()) {
-          //   const userData = userSnapshot.data();
-          //   this.users[userEmail] = userData; // Update the "users" object with the new user data
-          // } else {
-          //   console.error('No user data found for email:', userEmail);
-          // }
-          // // ------- Only for Basic Auth -------
 
           // Fetch the user details immediately and update "users" object
           const userDoc = doc(db, 'users', currentUser.value.uid);
@@ -278,7 +283,6 @@ export default {
 
           // Add new review locally to the list
           this.reviews.push({
-            // userId: userEmail, // --> Only for Basic Auth
             userId: currentUser.value.uid,
             date: new Date(),
             recommend: this.newReview.recommend === 'true',
@@ -327,9 +331,8 @@ export default {
         this.$router.push('/login');
       } else {
         // Create CSV content
-        const headers = ['Title', 'Content', 'Points'];
-        const points = `"${this.article.points.join('; ')}"`;
-        const row = [this.article.title, this.article.content, points];
+        const headers = ['Title', 'Content'];
+        const row = [this.article.title, this.article.content.replace(/<\/?[^>]+(>|$)/g, "")];
 
         // Combine headers and row into a CSV string
         let csvContent = "data:text/csv;charset=utf-8," 
@@ -366,7 +369,7 @@ export default {
         yOffset += lineHeight + 5; // Add space for the next section
         doc.setFontSize(12);
         
-        const splitContent = doc.splitTextToSize("Content: " + this.article.content, 190); // Wrap text to fit the page width
+        const splitContent = doc.splitTextToSize("Content: " + this.article.content.replace(/<\/?[^>]+(>|$)/g, ""), 190); // Wrap text to fit the page width
         splitContent.forEach((line) => {
           if (yOffset + lineHeight > pageHeight - 10) { // Check if content exceeds page height
             doc.addPage();
@@ -374,23 +377,6 @@ export default {
           }
           doc.text(line, 10, yOffset);
           yOffset += lineHeight;
-        });
-        
-        // Add points with dynamic page breaking
-        yOffset += 5; // Add some space before starting points
-        doc.text("Points:", 10, yOffset);
-        yOffset += lineHeight;
-
-        this.article.points.forEach((point, index) => {
-          const splitPoint = doc.splitTextToSize((index + 1) + ". " + point, 190); // Wrap points text
-          splitPoint.forEach((line) => {
-            if (yOffset + lineHeight > pageHeight - 10) { // Check for page overflow
-              doc.addPage();
-              yOffset = 10; // Reset yOffset for the new page
-            }
-            doc.text(line, 10, yOffset);
-            yOffset += lineHeight;
-          });
         });
 
         // Save the document
