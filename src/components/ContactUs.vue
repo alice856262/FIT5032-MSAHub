@@ -49,7 +49,7 @@ export default {
         }
 
         try {
-          const response = await axios.post('http://msahub.life/send-email', formData, {
+          const response = await axios.post('https://msahub.life/send-email', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
