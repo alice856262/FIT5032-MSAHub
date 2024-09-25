@@ -4,8 +4,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-console.log('Vite ENV:', import.meta.env);
-
 // import PrimeVue from 'primevue/config'
 // import Aura from '@primevue/themes/aura'
 

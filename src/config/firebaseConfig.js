@@ -22,6 +22,4 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-console.log("import.meta.env", import.meta.env)
-
 export { db, auth };

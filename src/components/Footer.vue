@@ -6,7 +6,7 @@
       </div>
       <div class="row mb-3">
         <router-link to="/">About Us</router-link>
-        <router-link to="/">Contact Us</router-link>
+        <router-link to="/contact-us">Contact Us</router-link>
         <router-link to="/">Privacy Policy</router-link>
         <router-link to="/">Terms of Service</router-link>
       </div>
