@@ -145,10 +145,29 @@ exports.sendEmail = onRequest({
       console.log("Sending email with SendGrid:", msg);
 
       // Send the email using SendGrid
-      await sgMail.send(msg);
+      try {
+        await sgMail.send(msg);
+        console.log("Email sent successfully!");
+        return res.status(200).send("Email sent successfully!");
+      } catch (error) {
+        console.error("SendGrid error:", error);
 
+        // Parse and log detailed error messages from SendGrid if available
+        if (error.response) {
+          console.error("SendGrid error response:", error.response.body);
+          return res
+              .status(500)
+              .send(
+                  `Error sending email: ${error.message} - ${JSON.stringify(
+                      error.response.body,
+                  )}`,
+              );
+        } else {
+          return res.status(500).send(`Error sending email: ${error.message}`);
+        }
+      }
       // Send success response if email was sent successfully
-      res.status(200).send("Email sent successfully!");
+    //   res.status(200).send("Email sent successfully!");
     });
   } catch (error) {
     // Log error if email sending failed
