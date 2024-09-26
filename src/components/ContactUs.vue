@@ -36,7 +36,7 @@ export default {
   methods: {
     async saveToFirestore() {
       const db = getFirestore();
-      const docRef = await addDoc(collection(db, "contactUsMessages"), {
+      const docRef = await addDoc(collection(db, "contactEmails"), {
         name: this.name,
         email: this.email,
         message: this.message,
