@@ -225,7 +225,7 @@
   }
   
   .article-link:hover {
-    color: #007bff;
+    color: #e5533d;
     font-weight: bold;
   }
   

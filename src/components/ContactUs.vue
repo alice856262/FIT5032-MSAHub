@@ -1,6 +1,9 @@
 <template>
-  <div class="contact-us">
-    <h2>Contact Us</h2>
+  <div class="container mt-3 mb-5">
+    <h1>Contact Us</h1>
+    <p>
+      Have any questions or feedback? Please fill out the form below to get in touch with us. We look forward to hearing from you!
+    </p>
     <form @submit.prevent="sendEmail">
       <div class="mb-3">
         <label for="name">Name</label>
@@ -14,7 +17,13 @@
         <label for="message">Message</label>
         <textarea v-model="message" id="message" class="form-control" rows="5" required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary">Send Email</button>
+      <div class="mb-3">
+        <label for="attachment">Attachments</label>
+        <input @change="onFileChange" type="file" id="attachment" class="form-control" multiple />
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
     </form>
   </div>
 </template>
@@ -22,8 +31,9 @@
 <script>
 import axios from 'axios';
 import { getFirestore, addDoc, collection } from "firebase/firestore";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
-const token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVhYWZmNDdjMjFkMDZlMjY2Y2NlMzk1YjIxNDVjN2M2ZDQ3MzBlYTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzMjU1NTk0MDU1OS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjMyNTU1OTQwNTU5LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA4NDA5NzI1OTk0OTE0ODA5MTcxIiwiZW1haWwiOiJhbGljZTg1NjI2MkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6Il9CT1FpanhqNXBrUEZSYXA4c2hJU0EiLCJpYXQiOjE3MjcyNzUxNjMsImV4cCI6MTcyNzI3ODc2M30.R7DGQ0vPhdUKnrB59DEQyUyUYvFQ4wF2iji3iHZV0rFI6CJHh8DU_PJuFSNeLyfqHCMzKwyv5llIbFxYbwd3ly7Hl8qjpBh88cpNhfvT9HXBjzZUKe1tvESMCW_pNPMMI7BeR9yApaHzFYMRMWtM57g9iscPZ_-24Ifdom0Vdq7cJA3Js8YELd82p_jvItBUvHN4Ewq5VIUWkuEZey9l0vThAFfSEeqwxXrPXpItgw6b1vKvRss3xwLyUDBQlUyf2dA4HN4heiR65p7WuUApjDCvQ1fOh8Eos4VUXMcB3mcVtBmyAxxCaKw56DZNuUsjZwCmSwPjP9P4ChOolT5V_A"
+// const token = import.meta.env.GOOGLE_CLOUD_IDENTITY_TOKEN
 
 export default {
   data() {
@@ -31,15 +41,31 @@ export default {
       name: '',
       email: '',
       message: '',
+      attachments: [],
     };
   },
   methods: {
+    onFileChange(event) {
+      this.attachments = Array.from(event.target.files); // Convert file list to array
+    },
     async saveToFirestore() {
       const db = getFirestore();
+      const storage = getStorage();
+      const uploadedFiles = [];
+
+      // Save each attachment to Firebase Storage and collect their URLs
+      for (const file of this.attachments) {
+        const storageRef = ref(storage, `contactAttachments/${file.name}`);
+        await uploadBytes(storageRef, file);
+        uploadedFiles.push(storageRef.fullPath); // Store the path of the uploaded file
+      }
+
+      // Save message content and attachment paths to Firestore
       const docRef = await addDoc(collection(db, "contactEmails"), {
         name: this.name,
         email: this.email,
         message: this.message,
+        attachments: uploadedFiles,
         timestamp: new Date(),
       });
       console.log("Message saved to Firestore with ID: ", docRef.id);
@@ -50,6 +76,8 @@ export default {
         // Save message content to Firestore
         await this.saveToFirestore();
 
+        // console.log(token)
+
         // Send the email using the backend function
         const response = await axios.post('https://sendemail-t4aajf3gxq-uc.a.run.app', {
           name: this.name,
@@ -57,7 +85,7 @@ export default {
         }, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            // 'Authorization': `Bearer ${token}`,
           },
         });
         console.log('Email sent successfully:', response.data);
@@ -68,3 +96,23 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.container {
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+p {
+  color: #666;
+  font-size: 18px;
+  line-height: 1.6;
+}
+</style>

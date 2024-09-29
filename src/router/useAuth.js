@@ -1,6 +1,6 @@
 import { ref } from 'vue';
-import router from '../router'
-import { doc, getDoc} from 'firebase/firestore';
+import router from '../router';
+import { doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../config/firebaseConfig.js';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
@@ -8,12 +8,25 @@ const currentUser = ref(null);
 const userType = ref(null);
 const isAuthenticated = ref(false);
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser.value = user;
     isAuthenticated.value = true;
+
+    // Fetch user type from Firestore
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      userType.value = userDoc.data().userType; // Ensure userType is set correctly
+      currentUser.value.firstName = userDoc.data().firstName; // Adding firstName to currentUser
+      currentUser.value.lastName = userDoc.data().lastName; // Adding lastName to currentUser
+      currentUser.value.reason = userDoc.data().reason; // Adding reason to currentUser
+    } else {
+      console.error('User document not found!');
+    }
   } else {
     currentUser.value = null;
+    userType.value = null;
     isAuthenticated.value = false;
   }
 });

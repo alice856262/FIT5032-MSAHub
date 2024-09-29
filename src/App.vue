@@ -1,7 +1,7 @@
 <template>
   <div id="app" style="margin-left: 10px; margin-right: 10px;">
-    <header class="d-flex justify-content-between align-items-center py-3" style="margin-left: 35px;">
-      <div class="d-flex align-items-center" style="width: 250px">
+    <header class="d-flex justify-content-between align-items-center py-3" style="margin-left: 20px;">
+      <div class="d-flex align-items-center" style="width: 200px">
         <a href="/">
           <img src="./assets/MSA_Hub_logo.png" alt="MSA Hub" style="height: 50px;">
         </a>
@@ -11,7 +11,7 @@
           <router-link to="/" class="nav-link custom-nav-link" active-class="active" aria-current="page">HOME</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/about" class="nav-link custom-nav-link" active-class="active" aria-current="page">ABOUT MSA</router-link>
+          <router-link to="/about" class="nav-link custom-nav-link" active-class="active" aria-current="page">ABOUT</router-link>
         </li>
         <li class="nav-item">
           <router-link to="/resource" class="nav-link custom-nav-link" active-class="active" aria-current="page">RESOURCE</router-link>
@@ -74,21 +74,25 @@ header {
 }
 
 .custom-nav-link {
+  font-size: 16px;
   color: #333;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: 30px;
   text-decoration: none;
   font-weight: bold;
+  transition: all 0.2s ease-in-out;
+  margin-right: -5px;
 }
 
 .custom-nav-link:hover {
-  background-color: #e96951;
-  border-color: #e96951;
+  background: #e96951;
+  box-shadow: 2px 2px 4px #d1d1d1, -2px -2px 4px #ffffff;
   color: white;
 }
 
 .custom-nav-link.active {
   background-color: #e5533d;
+  box-shadow: 2px 2px 4px #d1d1d1, -2px -2px 4px #ffffff;
 }
 
 @media (max-width: 575px) {

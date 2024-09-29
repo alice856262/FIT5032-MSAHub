@@ -5,7 +5,7 @@
         <p>© 2024 MSA Hub. All Rights Reserved.</p>
       </div>
       <div class="row mb-3">
-        <router-link to="/">About Us</router-link>
+        <router-link to="/about">About Us</router-link>
         <router-link to="/contact-us">Contact Us</router-link>
         <router-link to="/">Privacy Policy</router-link>
         <router-link to="/">Terms of Service</router-link>
@@ -25,4 +25,16 @@
     name: "Footer",
   };
 </script>
+
+<style scoped>
+a {
+  color: #e5533d;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+</style>
   

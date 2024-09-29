@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container mt-3 mb-5">
     <h1 class="mb-4">MSA Caring Tool</h1>
     <p>Use the tools below to monitor symptoms and plan your treatments effectively:</p>
 
@@ -116,6 +116,17 @@ const addSymptomEntry = () => {
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+p {
+  color: #666;
+  font-size: 18px;
+  line-height: 1.6;
 }
 
 .card {

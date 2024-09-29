@@ -12,6 +12,7 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import ContactUs from '../components/ContactUs.vue'
+import ForumView from '../views/ForumView.vue'
 
 const routes = [
   {
@@ -72,6 +73,12 @@ const routes = [
     path: '/contact-us',
     name: 'ContactUs',
     component: ContactUs
+  },
+  {
+    path: '/community/:forumType',
+    name: 'ForumView',
+    component: ForumView,
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -80,14 +87,27 @@ const router = createRouter({
   routes
 })
 
-// Navigation guard to check authentication
+// Navigation guard to check authentication and authorization
 router.beforeEach((to, from, next) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userType, currentUser } = useAuth();
 
   if (to.meta.requiresAuth && !isAuthenticated.value) {
+    // User is not authenticated, redirect to login
     next('/login');
+  } else if (to.name === 'Forum' && userType.value === 'general') {
+    // User is trying to access a forum
+    const userReason = currentUser.value.reason;
+    const forumType = to.params.forumType;
+
+    if (userReason !== forumType) {
+      // User is not authorized to access this forum, redirect to community page
+      alert('You are not authorised to access this forum.');
+      next('/community');
+    } else {
+      next(); // User is authorised, proceed
+    }
   } else {
-    next();
+    next(); // No specific authorisation needed, proceed
   }
 })
 

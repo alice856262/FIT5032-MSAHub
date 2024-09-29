@@ -1,8 +1,8 @@
 <template>
-  <div class="container mt-3">
+  <div class="container mt-3 mb-5">
     <div class="row justify-content-center">
       <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
-        <h1>About MSA</h1>
+        <h1>About MSA Hub</h1>
         <p>
           Multiple System Atrophy (MSA) is a rare neurodegenerative disorder characterized by a combination of symptoms that affect both the autonomic nervous system and movement. 
           It is a progressive condition, meaning it worsens over time. MSA can lead to symptoms such as muscle rigidity, tremors, and impaired coordination. 
@@ -21,7 +21,7 @@
         </ul>
         <h2>Contact Us</h2>
         <p>
-          If you have any questions or need support, feel free to contact us at <a href="mailto:info@msahub.org">info@msahub.org</a>.
+          If you have any questions or need support, feel free to contact us <router-link to="/contact-us">here</router-link>.
         </p>
       </div>
     </div>

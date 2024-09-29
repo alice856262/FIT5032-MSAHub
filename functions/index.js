@@ -77,8 +77,10 @@ exports.sendEmail = onRequest({
   timeoutSeconds: 300,
   memory: "512MiB",
 }, async (req, res) => {
+  console.log("Handling request!!!!");
+
   // Use CORS middleware to handle preflight requests
-  await cors(req, res, async () => {
+  return cors(req, res, async () => {
     console.log("Received request:", req.method, req.body);
 
     // Check if the request method is POST, otherwise reject it
@@ -100,11 +102,15 @@ exports.sendEmail = onRequest({
     try {
       // Prepare the email message
       const msg = {
-        to: email, // Send email to the user's provided email
-        from: "info@em94.msahub.life", // Verified email from your domain
+        to: email, // user's provided email
+        from: "info@em94.msahub.life", // verified domain email
         subject: `Thank you, ${name}!`,
-        text: `Dear ${name},\n\nThank you for contacting us!`,
-        html: `<p>Dear ${name},</p><p>Thank you for contacting us!</p>`,
+        text: `Dear ${name},\n\nThank you for contacting us! We have
+        received your message and will get back to you shortly.\n\nBest
+        Regards,\nTeam`,
+        html: `<p>Dear ${name},</p><p>Thank you for contacting us! We have
+        received your message and will get back to you shortly.</p><p>Best
+        Regards,<br/>Team</p>`,
       };
 
       console.log("Sending email with SendGrid:", msg);
@@ -113,6 +119,7 @@ exports.sendEmail = onRequest({
       await sgMail.send(msg);
 
       // Send success response if email was sent successfully
+      // res.set('Access-Control-Allow-Origin', '*');
       res.status(200).send("Email sent successfully!");
     } catch (error) {
       // Log error if email sending failed
@@ -121,3 +128,78 @@ exports.sendEmail = onRequest({
     }
   });
 });
+
+// exports.sendEmail = onRequest({
+//   timeoutSeconds: 300,
+//   memory: "512MiB",
+// }, async (req, res) => {
+//   console.log("Handling request!!!!");
+
+//   if (req.method === "OPTIONS" || req.method == "OPTIONS") {
+//     console.log("Handling OPTIONS request for CORS preflight.");
+//     res.set("Access-Control-Allow-Origin", "*");
+//     res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+//     res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//     return res.status(204).send(""); // Send empty response with 204 status
+//   }
+
+//   cors(req, res, async () => { // Use CORS middleware to handle preflight
+//     // Handle preflight OPTIONS request
+//     if (req.method === "OPTIONS") {
+//       console.log("Handling OPTIONS request for CORS preflight.");
+//       res.set("Access-Control-Allow-Origin", "*");
+//       res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+//       res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//       res.set("Access-Control-Max-Age", "3600");
+//       return res.status(204).send(""); // Send empty response with 204 status
+//     }
+
+//     // Handle the main POST request
+//     try {
+//       console.log("Received request:", req.method, req.body);
+
+//       // Check if the request method is POST, otherwise reject it
+//       if (req.method !== "POST") {
+//         console.log("Invalid request method:", req.method);
+//         return res.status(405).send("Method Not Allowed");
+//       }
+
+//       // Extract data from the request body
+//       const {email, name} = req.body;
+//       console.log("Extracted from req.body:", {email, name});
+
+//       // Validate the extracted values
+//       if (!email || !name) {
+//         console.log("Missing required fields: ", {email, name});
+//         return res.status(400).send("Bad Request: Missing required fields.");
+//       }
+
+//       // Prepare the email message
+//       const msg = {
+//         to: email, // user's provided email
+//         from: "info@em94.msahub.life", // verified domain email
+//         subject: `Thank you, ${name}!`,
+//         text: `Dear ${name},\n\nThank you for contacting us! We have
+//         received
+//         your message and will get back to you shortly.\n\nBest Regards,
+//         \nTeam`,
+//         html: `<p>Dear ${name},</p><p>Thank you for contacting us! We have
+//         received your message and will get back to you shortly.</p><p>Best
+//         Regards,<br/>Team</p>`,
+//       };
+
+//       console.log("Sending email with SendGrid:", msg);
+
+//       // Send the email using SendGrid
+//       await sgMail.send(msg);
+
+//       // Set CORS headers and send success response
+//       res.set("Access-Control-Allow-Origin", "*");
+//       return res.status(200).send("Email sent successfully!");
+//     } catch (error) {
+//       // Log error if email sending failed
+//       console.error("Error sending email:", error.message);
+//       return res.status(500).send(`Error sending email: ${error.message}`);
+//     }
+//   });
+// });
