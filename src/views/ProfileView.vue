@@ -102,7 +102,6 @@
           </div>
         </div>
       </div>
-      <!-- <button @click="logout" class="btn btn-secondary">Logout</button> -->
     </div>
     <!-- Display loading if user data is not available -->
     <div v-else>  <!-- Fallback content: if the user object is not yet loaded, a loading message is displayed -->
@@ -117,7 +116,7 @@ import { collection, getDocs, query, where, doc, getDoc, updateDoc } from 'fireb
 import { db, storage } from '../config/firebaseConfig.js';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const { logout, currentUser } = useAuth();
+const { currentUser } = useAuth();
 const user = ref(null);
 const userReviews = ref([]);
 
@@ -263,6 +262,13 @@ onMounted(async () => {
     justify-content: center;
     align-items: center;
     margin-bottom: -30px;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .upload-icon {

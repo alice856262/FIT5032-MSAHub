@@ -42,13 +42,14 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, Timestamp, query, where } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
+import { useAuth } from '../router/useAuth.js'; // Import useAuth for authentication
 
 export default {
   components: {
@@ -76,12 +77,19 @@ export default {
         eventClick: this.handleEventClick,
         eventChange: this.handleEventChange, // For drag-and-drop event changes
         select: this.handleDateRangeSelect, // For selecting a date range to create an event
-      }
+      },
     };
   },
   methods: {
     fetchEvents() {
-      const eventsCollection = collection(db, 'events');
+      const { currentUser } = useAuth(); // Get the current user using useAuth composable
+
+      // Ensure we only proceed if there is a logged-in user
+      if (!currentUser.value) return;
+
+      // Fetch events for the current user
+      const eventsCollection = query(collection(db, 'events'), where('userId', '==', currentUser.value.uid));
+
       onSnapshot(eventsCollection, (snapshot) => {
         this.events = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -117,42 +125,45 @@ export default {
       }
       this.showModal = true;
     },
-    // Method to check if a new event conflicts with existing events
     checkForConflicts(newEvent, excludeEventId = null) {
       return this.events.some(event => {
-        // Skip the event that is being edited/dragged
         if (excludeEventId && event.id === excludeEventId) {
           return false;
         }
 
         const existingStart = event.start;
-        const existingEnd = event.end || new Date(existingStart.getTime() + 86400000); // Default end time for all-day events
+        const existingEnd = event.end || new Date(existingStart.getTime() + 86400000);
         const newStart = new Date(newEvent.start.seconds ? newEvent.start.seconds * 1000 : newEvent.start);
         const newEnd = new Date(newEvent.end ? (newEvent.end.seconds ? newEvent.end.seconds * 1000 : newEvent.end) : newStart.getTime() + 86400000);
 
-        // Check if the new event overlaps with any existing event
         return (
-          (newStart >= existingStart && newStart < existingEnd) || // New start is within the range of an existing event
-          (newEnd > existingStart && newEnd <= existingEnd) || // New end is within the range of an existing event
-          (newStart <= existingStart && newEnd >= existingEnd) // New event fully overlaps an existing event
+          (newStart >= existingStart && newStart < existingEnd) ||
+          (newEnd > existingStart && newEnd <= existingEnd) ||
+          (newStart <= existingStart && newEnd >= existingEnd)
         );
       });
     },
-    // Save or update event in Firestore with conflict detection
     saveEvent() {
+      const { currentUser } = useAuth();
+
+      if (!currentUser.value) {
+        alert('User not logged in.');
+        return;
+      }
+
       const newEvent = {
+        userId: currentUser.value.uid,
         title: this.eventForm.title,
         description: this.eventForm.description,
         allDay: this.eventForm.allDay,
         start: this.eventForm.allDay
-          ? Timestamp.fromDate(new Date(this.eventForm.startTime.split('T')[0])) // Only date for all-day events
+          ? Timestamp.fromDate(new Date(this.eventForm.startTime.split('T')[0]))
           : Timestamp.fromDate(new Date(this.eventForm.startTime)),
         end: this.eventForm.allDay
-          ? Timestamp.fromDate(new Date(new Date(this.eventForm.startTime.split('T')[0]).getTime() + 86400000)) // End date + 1 day for all-day events
+          ? Timestamp.fromDate(new Date(new Date(this.eventForm.startTime.split('T')[0]).getTime() + 86400000))
           : Timestamp.fromDate(new Date(this.eventForm.endTime)),
       };
 
-      // Check for conflicts before saving, exclude the event being edited
       const excludeEventId = this.editingEvent ? this.editingEvent.id : null;
       if (this.checkForConflicts(newEvent, excludeEventId)) {
         alert('This event conflicts with an existing one! Please choose a different time.');
@@ -160,7 +171,6 @@ export default {
       }
 
       if (this.editingEvent) {
-        // Update existing event
         const eventRef = doc(db, 'events', this.editingEvent.id);
         updateDoc(eventRef, newEvent)
           .then(() => {
@@ -170,7 +180,6 @@ export default {
             console.error('Error updating event:', error);
           });
       } else {
-        // Add new event
         addDoc(collection(db, 'events'), newEvent)
           .then(() => {
             console.log('Event added:', newEvent);
@@ -197,19 +206,17 @@ export default {
       }
       this.closeModal();
     },
-    // Handle dragging and dropping to change the event date
     handleEventChange(info) {
       const updatedEvent = {
+        userId: info.event.extendedProps.userId,
         title: info.event.title,
         start: Timestamp.fromDate(new Date(info.event.startStr)),
         end: Timestamp.fromDate(new Date(info.event.endStr)),
         allDay: info.event.allDay,
       };
 
-      // Check for conflicts, excluding the dragged event itself
       if (this.checkForConflicts(updatedEvent, info.event.id)) {
         alert('This event conflicts with an existing one! Please choose a different time.');
-        // Revert the drag to prevent the conflicting change
         info.revert();
         return;
       }
@@ -224,7 +231,7 @@ export default {
         });
     },
     formatDateTimeLocal(date) {
-      return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+      return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     },
     resetEventForm() {
       this.eventForm = {
@@ -241,7 +248,16 @@ export default {
     },
   },
   mounted() {
-    this.fetchEvents();
+    const { currentUser } = useAuth();
+    watch(
+      currentUser,
+      (user) => {
+        if (user) {
+          this.fetchEvents();
+        }
+      },
+      { immediate: true }
+    );
   },
 };
 </script>

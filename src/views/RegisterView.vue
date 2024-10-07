@@ -89,12 +89,12 @@
               <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
             </div>
           </div>
-          <!-- Submit Button -->
-          <div class="row mb-3" style="margin-top: 30px">
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary me-2">Sign Up</button>
-              <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
-            </div>
+          <!-- Submit/Cancel Button -->
+          <div class="mt-4 mb-3 text-center">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+          </div>
+          <div class="mb-3 text-center">
+            <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
           </div>
           <div class="row mb-5">
             <p class="text-center">Already registered? <router-link to="/login">Login</router-link></p>
@@ -315,4 +315,27 @@ const validateReason = () => {
     }
 };
 </script>
-  
+
+<style scoped>
+button.btn-primary {
+  color: white;
+  border-radius: 60px;
+  background-color: #e96951;
+  height: 45px; 
+  width: 210px; 
+  font-weight: bold;
+}
+
+button.btn-primary:hover {
+  background-color: #e5533d;
+  border-color: #e5533d;
+}
+
+button.btn-secondary {
+  color: white;
+  border-radius: 60px;
+  height: 45px; 
+  width: 210px; 
+  font-weight: bold;
+}
+</style>

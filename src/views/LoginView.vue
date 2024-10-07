@@ -17,14 +17,14 @@
           </div>
 
           <!-- Login Button -->
-          <div class="mb-3 text-center">
+          <div class="mt-5 mb-3 text-center">
             <button type="submit" class="btn btn-primary-login">Login</button>
           </div>
 
           <!-- Google Sign-in -->
-          <div class="mb-3 text-center">
+          <!-- <div class="mb-3 text-center">
             <img src="/src/assets/google_signin.png" alt="Sign in with Google" class="google-signin" @click="handleGoogleLogin" />
-          </div>
+          </div> -->
 
           <!-- Forgot Password Link -->
           <div class="mb-3 text-center">
@@ -87,9 +87,9 @@ const handleLogin = async () => {
   await login(email.value, password.value);
 };
 
-const handleGoogleLogin = async () => {
-  await loginWithGoogle();
-};
+// const handleGoogleLogin = async () => {
+//   await loginWithGoogle();
+// };
 
 const handleForgotPasswordLinkClick = () => {
   showForgotPasswordModal.value = true; // This sets the variable to true, showing the modal
@@ -121,7 +121,6 @@ button.btn-primary-login {
   color: white;
   border-radius: 60px;
   background-color: #e96951;
-  border-color: #333;
   height: 45px; 
   width: 210px; 
   font-weight: bold;
@@ -152,10 +151,10 @@ button.btn-primary-login:hover {
   max-width: 400px;
 }
 
-.google-signin {
+/* .google-signin {
   height: 48px;
   cursor: pointer;
-}
+} */
 
 @media (max-width: 575px) {
   .container {

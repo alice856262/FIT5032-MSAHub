@@ -3,7 +3,7 @@
     <header class="d-flex justify-content-between align-items-center py-3" style="margin-left: 20px;">
       <div class="d-flex align-items-center" style="width: 200px">
         <a href="/">
-          <img src="./assets/MSA_Hub_logo.png" alt="MSA Hub" style="height: 50px;">
+          <img src="@/assets/MSA_Hub_logo.png" alt="MSA Hub" style="height: 50px;">
         </a>
       </div>
       <ul class="nav nav-pills me-3 flex-wrap" style="margin-right: 20px;">

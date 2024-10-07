@@ -10,7 +10,7 @@
         <div class="article-text" v-html="sanitizedContent"></div>
       </div>
       <div class="col-md-4 col-sd-4">
-        <div class="photo-placeholder">Photo</div>
+        <img :src="article.picture" class="picture" alt="Article Picture">
       </div>
       <div class="d-flex justify-content-start">
         <!-- Toggle the 'showFullContent' state on button click -->
@@ -153,6 +153,7 @@ export default {
       article: {
         title: '',
         content: '',
+        picture: '',
         points: []
       },
       reviews: [],
@@ -214,7 +215,8 @@ export default {
           // Combine content with points list
           this.article = {
             ...articleData,
-            content: `${articleData.content} ${pointsList}`
+            content: `${articleData.content} ${pointsList}`,
+            picture: articleData.picture || '/src/assets/article_default.png'
           };
         }
 
@@ -469,9 +471,9 @@ export default {
   margin-bottom: 20px;
 }
 
-.photo-placeholder {
+.picture {
   width: 100%;
-  height: 200px;
+  height: 250px;
   background-color: #ffcf56;
   display: flex;
   align-items: center;
