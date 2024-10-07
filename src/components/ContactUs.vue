@@ -31,9 +31,7 @@
 <script>
 import axios from 'axios';
 import { getFirestore, addDoc, collection } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-
-// const token = import.meta.env.GOOGLE_CLOUD_IDENTITY_TOKEN
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default {
   data() {
@@ -53,14 +51,16 @@ export default {
       const storage = getStorage();
       const uploadedFiles = [];
 
-      // Save each attachment to Firebase Storage and collect their URLs
+      // Save each attachment to Firebase Storage with path including email
       for (const file of this.attachments) {
-        const storageRef = ref(storage, `contactAttachments/${file.name}`);
+        const storagePath = `contactAttachments/${this.email}/${file.name}`;
+        const storageRef = ref(storage, storagePath);
         await uploadBytes(storageRef, file);
-        uploadedFiles.push(storageRef.fullPath); // Store the path of the uploaded file
+        const downloadURL = await getDownloadURL(storageRef);
+        uploadedFiles.push(downloadURL); // Store the download URL of the uploaded file
       }
 
-      // Save message content and attachment paths to Firestore
+      // Save message content and attachment URLs to Firestore
       const docRef = await addDoc(collection(db, "contactEmails"), {
         name: this.name,
         email: this.email,
@@ -76,21 +76,26 @@ export default {
         // Save message content to Firestore
         await this.saveToFirestore();
 
-        // console.log(token)
-
         // Send the email using the backend function
         const response = await axios.post('https://sendemail-t4aajf3gxq-uc.a.run.app', {
           name: this.name,
-          email: this.email
+          email: this.email,
         }, {
           headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${token}`,
           },
         });
         console.log('Email sent successfully:', response.data);
+        alert("Your message has been sent successfully!");
+        
+        // Reset form fields and attachments after successful submission
+        this.name = '';
+        this.email = '';
+        this.message = '';
+        this.attachments = [];
       } catch (error) {
         console.error('Error sending email:', error);
+        alert("There was an error sending your message. Please try again.");
       }
     }
   },

@@ -12,7 +12,11 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@fullcalendar/core/main.css': '@fullcalendar/core',
+      '@fullcalendar/daygrid/main.css': '@fullcalendar/daygrid',
+      '@fullcalendar/timegrid/main.css': '@fullcalendar/timegrid',
+      '@fullcalendar/interaction/main.css': '@fullcalendar/interaction',
     }
   },
   envPrefix: 'VUE_APP_'

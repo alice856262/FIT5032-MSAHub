@@ -5,24 +5,23 @@
       <div class="btn-container">
         <button 
           class="btn-nav" 
-          :class="{ active: currentView === 'Articles' }" 
-          @click="currentView = 'Articles'">
-          <span class="icon">📄</span>
-          <span class="text">Article</span>
+          :class="{ active: currentView === 'CalendarView' }" 
+          @click="currentView = 'CalendarView'">
+          <span class="icon">📅</span>
+          <span class="text">Calendar</span>
         </button>
         <button 
           class="btn-nav" 
-          :class="{ active: currentView === 'Maps' }" 
-          @click="currentView = 'Maps'">
-          <span class="icon">🗺️</span>
-          <span class="text">Map</span>
+          :class="{ active: currentView === 'MedicationView' }" 
+          @click="currentView = 'MedicationView'">
+          <span class="icon">💊</span>
+          <span class="text">Medication</span>
         </button>
       </div>
     </aside>
 
-    <!-- Main content area for Articles or Maps -->
+    <!-- Main content area for Calendar or Medication -->
     <main class="content">
-      <!-- Show the Articles or Maps component based on currentView -->
       <component :is="currentViewComponent" />
     </main>
   </div>
@@ -30,22 +29,22 @@
 
 <script>
 import { ref, computed } from 'vue';
-import Articles from '../components/ArticleList.vue';
-import Maps from '../components/Map.vue';
+import CalendarView from './Calendar.vue';
+import MedicationView from './MedicationList.vue';
 
 export default {
-  name: 'ResourceView',
+  name: 'TreatmentPlanner',
   components: {
-    Articles,
-    Maps,
+    CalendarView,
+    MedicationView,
   },
   setup() {
-    // State to keep track of the current view
-    const currentView = ref('Articles');
+    // State to track the current view
+    const currentView = ref('CalendarView');
 
-    // Computed property to return the current component based on currentView
+    // Computed property to return the appropriate component
     const currentViewComponent = computed(() => {
-      return currentView.value === 'Articles' ? Articles : Maps;
+      return currentView.value === 'CalendarView' ? CalendarView : MedicationView;
     });
 
     return {
@@ -66,24 +65,23 @@ export default {
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center the button container */
+  align-items: center;
 }
 
 .btn-container {
   position: sticky;
-  top: 50%; /* Stick the buttons container in the middle */
-  transform: translateY(-50%); /* Center the buttons container vertically */
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
 .btn-nav {
-  margin-bottom: 30px;
   width: 100px;
   height: 95px;
   display: flex;
-  flex-direction: column; /* Stack icon and text vertically */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 15px 20px;
@@ -102,19 +100,8 @@ export default {
   font-size: 24px;
 }
 
-.btn-nav:hover {
-  background: linear-gradient(145deg, #e6e6e6, #ffffff);
-  box-shadow: 1px 1px 3px #d1d1d1, -1px -1px 3px #ffffff;
-}
-
-.btn-nav:active {
-  background: linear-gradient(145deg, #d1d1d1, #f1f1f1);
-  box-shadow: inset 1px 1px 3px #c1c1c1, inset -1px -1px 3px #ffffff;
-}
-
 .btn-nav.active {
   background: #ffcf78;
-  color: #333;
   box-shadow: 1px 1px 3px #ffcf78, -1px -1px 3px #ffcf78;
 }
 

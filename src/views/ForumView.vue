@@ -12,13 +12,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useAuth } from '/src/router/useAuth.js';
 import ForumThreads from '../components/ForumThreads.vue'; // Import the component
 
 const { currentUser, userType } = useAuth();
 const route = useRoute();
-const router = useRouter();
 
 const forumType = ref(route.params.forumType);
 const forumTitle = ref('');

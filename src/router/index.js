@@ -13,6 +13,8 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import ContactUs from '../components/ContactUs.vue'
 import ForumView from '../views/ForumView.vue'
+import SymptomTracker from '../components/SymptomTracker.vue'
+import TreatmentPlanner from '../components/TreatmentPlanner.vue'
 
 const routes = [
   {
@@ -79,7 +81,17 @@ const routes = [
     name: 'ForumView',
     component: ForumView,
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/tool/symptom-tracker',
+    name: 'SymptomTracker',
+    component: SymptomTracker,
+  },
+  {
+    path: '/tool/treatment-planner',
+    name: 'TreatmentPlanner',
+    component: TreatmentPlanner,
+  },
 ]
 
 const router = createRouter({

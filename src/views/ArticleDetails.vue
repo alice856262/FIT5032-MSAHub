@@ -2,7 +2,7 @@
   <div class="offset-sd-1 offset-md-1">
     <button class="btn btn-secondary mb-3" @click="goBack">← Back</button>
   </div>
-  <div class="container article-details">
+  <div class="container mb-5">
     <div class="row">
       <h1 class="article-title">{{ article.title }}</h1>
       <div class="col-md-8 col-sd-8">
@@ -522,16 +522,20 @@ export default {
   border-color: #c94431;
 }
 
+.btn-outline-secondary {
+  border-width: 3px;
+}
+
 button.btn-primary-custom {
-    border-color: #e5533d;
-    border-width: 3px;
-    color: #555;
+  border-color: #e5533d;
+  border-width: 3px;
+  color: #555;
 }
   
 button.btn-primary-custom:hover {
-    background-color: #e5533d;
-    border-color: #e5533d;
-    color: #f6f4f3;
+  background-color: #e5533d;
+  border-color: #e5533d;
+  color: #f6f4f3;
 }
 
 .modal {
@@ -551,7 +555,7 @@ button.btn-primary-custom:hover {
   background-color: #ffcf78;
   padding: 30px;
   border-radius: 15px;
-  width: 50%;
+  width: 200%;
 }
 
 .star-rating {

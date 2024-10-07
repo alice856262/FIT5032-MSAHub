@@ -6,12 +6,12 @@
     <interactive-table :rows="articles" :columns="columns" />
   </div>
 </template>
-  
+
 <script>
 import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig.js';
-import InteractiveTable from '../components/InteractiveTable.vue';
+import InteractiveTable from '../components/ArticleInteractiveTable.vue';
 
 export default {
   components: {
@@ -25,16 +25,26 @@ export default {
       { key: 'time', label: 'Publish Date', searchable: true },
     ]);
 
+    // Function to format date to dd/mm/yyyy
+    const formatDate = (timestamp) => {
+      const date = new Date(timestamp.toDate());
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
     const fetchArticles = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'articles'));
         articles.value = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        const formattedTime = data.time ? new Date(data.time.toDate()).toISOString().substring(0, 10) : '';
-        return {
-          id: doc.id,
-          ...data,
-          time: formattedTime,};
+          const data = doc.data();
+          const formattedTime = data.time ? formatDate(data.time) : '';
+          return {
+            id: doc.id,
+            ...data,
+            time: formattedTime,
+          };
         });
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -64,4 +74,3 @@ p {
   line-height: 1.6;
 }
 </style>
-  

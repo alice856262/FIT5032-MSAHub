@@ -7,14 +7,15 @@
           <div class="row mb-3">
             <div class="col-12 d-flex">
               <div class="profile-picture">
-                <img src="/src/assets/profile_pic.png" alt="Profile Picture" class="img-fluid rounded-circle" />
+                <img :src="user.profilePicture || '/src/assets/profile_pic.png'" alt="Profile Picture" class="img-fluid rounded-circle" />
               </div>
             </div>
           </div>
           <!-- Lower Row: Upload Icon -->
           <div class="row mb-3">
             <div class="col-12 d-flex justify-content-end">
-              <p class="upload-icon">+</p>
+              <p class="upload-icon" @click="triggerFileUpload">+</p>
+              <input type="file" ref="fileInput" @change="uploadProfilePicture" class="d-none" />
             </div>
           </div>
         </div>
@@ -113,13 +114,12 @@
 import { ref, onMounted } from 'vue';
 import { useAuth } from '../router/useAuth.js';
 import { collection, getDocs, query, where, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig.js';
-import { useRouter } from 'vue-router';
+import { db, storage } from '../config/firebaseConfig.js';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const { logout, currentUser } = useAuth();
 const user = ref(null);
 const userReviews = ref([]);
-const router = useRouter();
 
 // State to manage which field is being edited
 const editing = ref({
@@ -155,6 +155,31 @@ const saveUserChanges = async () => {
       console.log('User data updated successfully');
     } catch (error) {
       console.error('Error updating user data:', error);
+    }
+  }
+};
+
+// Trigger the hidden file input when upload icon is clicked
+const triggerFileUpload = () => {
+  document.querySelector("input[type='file']").click();
+};
+
+// Handle profile picture upload
+const uploadProfilePicture = async (event) => {
+  const file = event.target.files[0];
+  if (file && currentUser.value) {
+    try {
+      const userId = currentUser.value.uid;
+      const fileRef = storageRef(storage, `profilePictures/${userId}`);
+      await uploadBytes(fileRef, file);
+      const downloadURL = await getDownloadURL(fileRef);
+
+      user.value.profilePicture = downloadURL; // Update user profile picture URL locally
+      const userDocRef = doc(db, 'users', userId);
+      await updateDoc(userDocRef, { profilePicture: downloadURL }); // Save to Firestore
+      console.log('Profile picture uploaded and updated successfully');
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
     }
   }
 };
@@ -252,6 +277,7 @@ onMounted(async () => {
     font-size: 16px;
     border: 3px solid #fff;
     margin-right: 15px;
+    cursor: pointer;
 }
 
 .review-item {
