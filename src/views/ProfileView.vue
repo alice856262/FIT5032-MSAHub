@@ -7,7 +7,7 @@
         <div class="row mb-3">
           <div class="col-12 d-flex">
             <div class="profile-picture">
-              <img :src="user.profilePicture || '/src/assets/profile_pic.png'" alt="User's profile picture" class="img-fluid rounded-circle" />
+              <img :src="user.profilePicture || '/assets/profile_pic.png'" alt="User's profile picture" class="img-fluid rounded-circle" />
             </div>
           </div>
         </div>
