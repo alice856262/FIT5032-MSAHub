@@ -167,6 +167,12 @@ export default {
   padding: 20px;
 }
 
+p {
+  color: #666;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

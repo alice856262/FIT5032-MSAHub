@@ -120,4 +120,14 @@ p {
   font-size: 1.125rem;
   line-height: 1.6;
 }
+
+.btn-primary {
+  background-color: #e5533d;
+  border-color: #e5533d;
+}
+
+.btn-primary:hover {
+  background-color: #c94431;
+  border-color: #c94431;
+}
 </style>
