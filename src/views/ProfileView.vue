@@ -7,7 +7,7 @@
         <div class="row mb-3">
           <div class="col-12 d-flex">
             <div class="profile-picture">
-              <img :src="user.profilePicture || '/assets/profile_pic.png'" alt="User's profile picture" class="img-fluid rounded-circle" />
+              <img :src="user.profilePicture || defaultProfilePicture" alt="User's profile picture" class="img-fluid rounded-circle" />
             </div>
           </div>
         </div>
@@ -115,6 +115,7 @@ import { useAuth } from '../router/useAuth.js';
 import { collection, getDocs, query, where, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db, storage } from '../config/firebaseConfig.js';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import defaultProfilePicture from '@/assets/profile_pic.png';
 
 const { currentUser } = useAuth();
 const user = ref(null);
