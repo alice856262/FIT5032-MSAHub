@@ -46,8 +46,9 @@ const login = async (email, password) => {
         console.error('No such document!');
     }
     router.push('/profile');
-    } catch (error) {
-    console.error('Error logging in:', error.message);
+  } catch (error) {
+    console.error("Error logging in:", error.message);
+    alert("Login failed. Please check your email/password and try again.");
   }
 };
 

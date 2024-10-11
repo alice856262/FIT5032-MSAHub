@@ -1,12 +1,12 @@
 <template>
-  <div class="container mt-3 mb-5" v-if="isAuthorized">
+  <div class="container mt-3 mb-5" v-if="isAuthorized" aria-live="polite">
     <h1>{{ forumTitle }}</h1>
     <p>Welcome to the {{ forumType }} forum!</p>
     <ForumThreads :forumTitle="forumTitle" />
   </div>
   <div v-else>
     <p>You are not authorised to access this forum.</p>
-    <router-link to="/community">Go back to Community</router-link>
+    <router-link to="/community" aria-label="Go back to Community page">Go back to Community</router-link>
   </div>
 </template>
 
@@ -14,7 +14,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '/src/router/useAuth.js';
-import ForumThreads from '../components/ForumThreads.vue'; // Import the component
+import ForumThreads from '../components/ForumThreads.vue';
 
 const { currentUser, userType } = useAuth();
 const route = useRoute();
@@ -68,7 +68,7 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 </style>

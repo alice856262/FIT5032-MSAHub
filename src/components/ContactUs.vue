@@ -1,28 +1,28 @@
 <template>
-  <div class="container mt-3 mb-5">
-    <h1>Contact Us</h1>
+  <div class="container mt-3 mb-5" role="main" aria-labelledby="contactUsTitle">
+    <h1 id="contactUsTitle">Contact Us</h1>
     <p>
       Have any questions or feedback? Please fill out the form below to get in touch with us. We look forward to hearing from you!
     </p>
     <form @submit.prevent="sendEmail">
       <div class="mb-3">
         <label for="name">Name</label>
-        <input v-model="name" type="text" id="name" class="form-control" required />
+        <input v-model="name" type="text" id="name" class="form-control" required aria-required="true" aria-label="Enter your full name" />
       </div>
       <div class="mb-3">
         <label for="email">Email</label>
-        <input v-model="email" type="email" id="email" class="form-control" required />
+        <input v-model="email" type="email" id="email" class="form-control" required aria-required="true" aria-label="Enter your email address" />
       </div>
       <div class="mb-3">
         <label for="message">Message</label>
-        <textarea v-model="message" id="message" class="form-control" rows="5" required></textarea>
+        <textarea v-model="message" id="message" class="form-control" rows="5" required aria-required="true" aria-label="Enter your message"></textarea>
       </div>
       <div class="mb-3">
         <label for="attachment">Attachments</label>
-        <input @change="onFileChange" type="file" id="attachment" class="form-control" multiple />
+        <input @change="onFileChange" type="file" id="attachment" class="form-control" multiple aria-label="Attach files if necessary" />
       </div>
       <div class="text-center">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" aria-label="Submit your message">Submit</button>
       </div>
     </form>
   </div>
@@ -117,7 +117,7 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 </style>

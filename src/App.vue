@@ -2,11 +2,11 @@
   <div id="app" style="margin-left: 10px; margin-right: 10px;">
     <header class="d-flex justify-content-between align-items-center py-3" style="margin-left: 20px;">
       <div class="d-flex align-items-center" style="width: 200px">
-        <a href="/">
-          <img src="@/assets/MSA_Hub_logo.png" alt="MSA Hub" style="height: 50px;">
+        <a href="/" aria-label="Go to homepage">
+          <img src="@/assets/MSA_Hub_logo.png" alt="MSA Hub Logo" style="height: 50px;">
         </a>
       </div>
-      <ul class="nav nav-pills me-3 flex-wrap" style="margin-right: 20px;">
+      <ul class="nav nav-pills me-3 flex-wrap" aria-label="Main Navigation" style="margin-right: 20px;">
         <li class="nav-item">
           <router-link to="/" class="nav-link custom-nav-link" active-class="active" aria-current="page">HOME</router-link>
         </li>
@@ -32,20 +32,20 @@
           <router-link to="/dashboard" class="nav-link custom-nav-link" active-class="active" aria-current="page">DASHBOARD</router-link>
         </li>
         <li class="nav-item" v-if="isAuthenticated">
-          <a href="#" @click.prevent="logout" class="nav-link custom-nav-link">LOGOUT</a>
+          <a href="#" @click.prevent="logout" class="nav-link custom-nav-link" aria-label="Log out">LOGOUT</a>
         </li>
         <!-- Show LOGIN and REGISTER buttons if not logged in -->
         <li class="nav-item" v-if="!isAuthenticated">
-          <router-link to="/login" class="nav-link custom-nav-link" active-class="active">LOGIN</router-link>
+          <router-link to="/login" class="nav-link custom-nav-link" active-class="active" aria-label="Log in">LOGIN</router-link>
         </li>
         <li class="nav-item" v-if="!isAuthenticated">
-          <router-link to="/register" class="nav-link custom-nav-link" active-class="active">REGISTER</router-link>
+          <router-link to="/register" class="nav-link custom-nav-link" active-class="active" aria-label="Register">REGISTER</router-link>
         </li>
       </ul>
     </header>
-    <div style="width: 100%; margin-left: 0px; margin-right: 0px;">
+    <main style="width: 100%; margin-left: 0px; margin-right: 0px;">
       <router-view></router-view>
-    </div>  
+    </main>  
     <Footer />
   </div>
 </template>
@@ -84,7 +84,8 @@ header {
   margin-right: -5px;
 }
 
-.custom-nav-link:hover {
+.custom-nav-link:focus, .custom-nav-link:hover {
+  outline: 2px #e96951;
   background: #e96951;
   box-shadow: 2px 2px 4px #d1d1d1, -2px -2px 4px #ffffff;
   color: white;

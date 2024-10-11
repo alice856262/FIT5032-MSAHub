@@ -3,101 +3,111 @@
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="display-4 mb-4">Create New Account</h1>
-        <form @submit.prevent="submitForm">  <!-- .prevent: prevents browser reloads page when the form is submitted -->
+        <form @submit.prevent="submitForm" aria-live="polite">  <!-- .prevent: prevents browser reloads page when the form is submitted -->
           <!-- Form Fields for User Details -->
           <div class="row mb-3">
             <div class="col-md-4 col-sm-4">
               <label for="firstName" class="form-label">First Name *</label>
               <input type="text" class="form-control" id="firstName" 
-              @blur="validateFirstName(true)"
-              @input="validateFirstName(false)"
-              v-model="formData.firstName" />
-              <div v-if="errors.firstName" class="text-danger">{{ errors.firstName }}</div>
+                @blur="validateFirstName(true)"
+                @input="validateFirstName(false)"
+                v-model="formData.firstName" 
+                aria-required="true" aria-describedby="firstNameError" />
+              <div v-if="errors.firstName" class="text-danger" id="firstNameError">{{ errors.firstName }}</div>
             </div>
             <div class="col-md-4 col-sm-4">
               <label for="lastName" class="form-label">Last Name *</label>
               <input type="text" class="form-control" id="lastName" 
-              @blur="validateLastName(true)"
-              @input="validateLastName(false)"
-              v-model="formData.lastName" />
-              <div v-if="errors.lastName" class="text-danger">{{ errors.lastName }}</div>
+                @blur="validateLastName(true)"
+                @input="validateLastName(false)"
+                v-model="formData.lastName" 
+                aria-required="true" aria-describedby="lastNameError" />
+              <div v-if="errors.lastName" class="text-danger" id="lastNameError">{{ errors.lastName }}</div>
             </div>
             <div class="col-md-4 col-sm-4">
               <label for="gender" class="form-label">Gender *</label>
-              <select class="form-select" id="gender" v-model="formData.gender" @change="validateGender">
+              <select class="form-select" id="gender" v-model="formData.gender" @change="validateGender" aria-required="true" aria-describedby="genderError">
                 <option value="" disabled>Select your gender</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
+              <div v-if="errors.gender" class="text-danger" id="genderError">{{ errors.gender }}</div>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-6 col-sm-6">
               <label for="email" class="form-label">Email *</label>
               <input type="email" class="form-control" id="email" 
-              @blur = "validateEmail(true)"
-              @input = "validateEmail(false)"
-              v-model="formData.email" />
-              <div v-if = "errors.email" class = "text-danger">{{ errors.email }}</div>
+                @blur = "validateEmail(true)"
+                @input = "validateEmail(false)"
+                v-model="formData.email" 
+                aria-required="true" aria-describedby="emailError" />
+              <div v-if="errors.email" class="text-danger" id="emailError">{{ errors.email }}</div>
             </div>
             <div class="col-md-6 col-sm-6">
               <label for="phone" class="form-label">Phone</label>
-              <input type="text" class="form-control" id="phone" v-model="formData.phone" />
+              <input type="text" class="form-control" id="phone" 
+                v-model="formData.phone" 
+                aria-label="Phone number" />
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-6 col-sm-6">
               <label for="password" class="form-label">Password *</label>
               <input type="password" class="form-control" id="password" 
-              @blur = "validatePassword(true)"
-              @input = "validatePassword(false)"
-              v-model="formData.password" />
-              <div v-if = "errors.password" class = "text-danger">{{ errors.password }}</div>
+                @blur = "validatePassword(true)"
+                @input = "validatePassword(false)"
+                v-model="formData.password" 
+                aria-required="true" aria-describedby="passwordError" />
+              <div v-if="errors.password" class="text-danger" id="passwordError">{{ errors.password }}</div>
             </div>
             <div class="col-md-6 col-sm-6">
               <label for="confirmPassword" class="form-label">Confirm Password *</label>
               <input type="password" class="form-control" id="confirmPassword" 
-              @input = "validateConfirmPassword(false)"
-              v-model="formData.confirmPassword" />
-              <div v-if = "errors.confirmPassword" class = "text-danger">{{ errors.confirmPassword }}</div>
+                @input = "validateConfirmPassword(false)"
+                v-model="formData.confirmPassword" 
+                aria-required="true" aria-describedby="confirmPasswordError" />
+              <div v-if="errors.confirmPassword" class="text-danger" id="confirmPasswordError">{{ errors.confirmPassword }}</div>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-4 col-sm-4">
               <label for="dob" class="form-label">Date of Birth *</label>
               <input type="date" class="form-control" id="dob" 
-              @blur="validateDob(true)"
-              v-model="formData.dob" />
-              <div v-if="errors.dob" class="text-danger">{{ errors.dob }}</div>
+                @blur="validateDob(true)"
+                v-model="formData.dob" 
+                aria-required="true" aria-describedby="dobError" />
+              <div v-if="errors.dob" class="text-danger" id="dobError">{{ errors.dob }}</div>
             </div>
             <div class="col-md-8 col-sm-8">
               <label for="address" class="form-label">Address</label>
-              <input type="text" class="form-control" id="address" v-model="formData.address" />
+              <input type="text" class="form-control" id="address" 
+                v-model="formData.address" 
+                aria-label="Address" />
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-6 col-sm-6">
               <label for="reason" class="form-label">Main Reason for Joining Us *</label>
-              <select class="form-select" id="reason" v-model="formData.reason" @change="validateReason">
+              <select class="form-select" id="reason" v-model="formData.reason" @change="validateReason" aria-required="true" aria-describedby="reasonError">
                 <option value="" disabled>Select your reason</option>
                 <option value="patient">I'm a MSA Patient</option>
                 <option value="caregiver">I'm a Caregiver</option>
                 <option value="professional">I'm a Professional</option>
               </select>
-              <div v-if="errors.reason" class="text-danger">{{ errors.reason }}</div>
+              <div v-if="errors.reason" class="text-danger" id="reasonError">{{ errors.reason }}</div>
             </div>
           </div>
           <!-- Submit/Cancel Button -->
           <div class="mt-4 mb-3 text-center">
-            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <button type="submit" class="btn btn-primary" aria-label="Sign up for a new account">Sign Up</button>
           </div>
           <div class="mb-3 text-center">
-            <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
+            <button type="button" class="btn btn-secondary" @click="clearForm" aria-label="Clear the form">Clear</button>
           </div>
           <div class="row mb-5">
-            <p class="text-center">Already registered? <router-link to="/login">Login</router-link></p>
+            <p class="text-center">Already registered? <router-link to="/login" class="custom-link text-center" aria-label="Go to login page">Login</router-link></p>
           </div>
         </form>
       </div>
@@ -336,6 +346,11 @@ button.btn-secondary {
   border-radius: 60px;
   height: 45px; 
   width: 210px; 
+  font-weight: bold;
+}
+
+.custom-link {
+  color: #e5533d;
   font-weight: bold;
 }
 </style>

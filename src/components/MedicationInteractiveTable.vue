@@ -6,13 +6,20 @@
       v-model="globalSearch"
       placeholder="Search all columns..."
       class="search-input mb-3"
+      aria-label="Search all columns"
     />
 
     <!-- Medication table -->
-    <table class="table">
+    <table class="table" role="table">
       <thead>
         <tr>
-          <th v-for="(column, index) in columns" :key="index" @click="sortByColumn(column)">
+          <th v-for="(column, index) in columns" 
+            :key="index" 
+            @click="sortByColumn(column)"
+            :aria-sort="currentSort.column === column.key ? (currentSort.asc ? 'ascending' : 'descending') : 'none'"
+            role="columnheader"
+            scope="col"
+            :aria-label="'Sort by ' + column.label">
             {{ column.label }}
             <span v-if="currentSort.column === column.key">{{ currentSort.asc ? '▲' : '▼' }}</span>
           </th>
@@ -25,13 +32,14 @@
               v-model="columnSearch[column.key]"
               placeholder="Search..."
               class="column-search-input"
+              :aria-label="'Search ' + column.label"
             />
           </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, index) in paginatedRows" :key="index">
-          <td v-for="(column, colIndex) in columns" :key="colIndex">
+        <tr v-for="(row, index) in paginatedRows" :key="index" role="row">
+          <td v-for="(column, colIndex) in columns" :key="colIndex" role="cell">
             <span>{{ row[column.key] }}</span>
           </td>
         </tr>
@@ -39,10 +47,10 @@
     </table>
 
     <!-- Pagination -->
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+    <div class="pagination" role="navigation" aria-label="Pagination Navigation">
+      <button @click="prevPage" :disabled="currentPage === 1" aria-label="Previous Page">Previous</button>
+      <span aria-live="polite">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages" aria-label="Next Page">Next</button>
     </div>
   </div>
 </template>
@@ -205,7 +213,7 @@ export default {
 .pagination button {
   padding: 10px 20px;
   border: none;
-  background-color: #007bff;
+  background-color: #e5533d;
   color: #ffffff;
   cursor: pointer;
   border-radius: 4px;

@@ -1,33 +1,35 @@
 <template>
   <div class="offset-sd-1 offset-md-1">
-    <button class="btn btn-secondary mb-3" @click="goBack">← Back</button>
+    <button class="btn btn-secondary mb-3" @click="goBack" aria-label="Go back to the resource page">← Back</button>
   </div>
   <div class="container mb-5">
     <div class="row">
       <h1 class="article-title">{{ article.title }}</h1>
       <div class="col-md-8 col-sd-8">
         <!-- Use v-html to render the truncated or full content based on showFullContent state -->
-        <div class="article-text" v-html="sanitizedContent"></div>
+        <div class="article-text" v-html="sanitizedContent" aria-live="polite"></div>
       </div>
       <div class="col-md-4 col-sd-4">
-        <img :src="article.picture" class="picture" alt="Article Picture">
+        <img :src="article.picture" class="picture" alt="Article Image related to {{ article.title }}">
       </div>
       <div class="d-flex justify-content-start">
         <!-- Toggle the 'showFullContent' state on button click -->
-        <button class="btn btn-primary" @click="toggleContent">{{ showFullContent ? "Show Less" : "Read More" }}</button>
+        <button class="btn btn-primary" @click="toggleContent" :aria-expanded="showFullContent" :aria-controls="article-content">
+          {{ showFullContent ? "Show Less" : "Read More" }}
+        </button>
       </div>
       <div class="d-flex justify-content-end">
-        <button class="btn btn-outline-secondary me-2" @click="downloadCSV">Download as CSV</button>
-        <button class="btn btn-outline-secondary" @click="downloadPDF">Download as PDF</button>
+        <button class="btn btn-outline-secondary me-2" @click="downloadCSV" aria-label="Download article as CSV">Download as CSV</button>
+        <button class="btn btn-outline-secondary" @click="downloadPDF" aria-label="Download article as PDF">Download as PDF</button>
       </div>
 
-      <!-- Other code remains the same -->
       <div class="col-md-12">
         <!-- Rating Section -->
-        <div class="rating-section d-flex align-items-center">
+        <div class="rating-section d-flex align-items-center" role="region" aria-labelledby="rating-section">
+          <h2 id="rating-section" class="visually-hidden">Rating Section</h2>
           <!-- Progress Ring -->
           <div class="progress-ring">
-            <svg class="progress-ring__svg" width="300" height="300">
+            <svg class="progress-ring__svg" width="300" height="300" role="img" aria-label="Progress ring showing recommendation percentage">
               <circle
                 class="progress-ring__circle"
                 :stroke-dasharray="circumference"
@@ -46,7 +48,7 @@
           </div>
 
           <!-- Rating Details -->
-          <div class="rating-details ms-4 col-md-3 col-sd-3">
+          <div class="rating-details ms-4 col-md-3 col-sd-3" aria-live="polite">
             <div v-for="n in [5, 4, 3, 2, 1]" :key="n" class="rating-bar">
               <span>{{ n }}</span>
               <div class="rating-bar__container">
@@ -60,20 +62,21 @@
               <span>{{ reviews.length }} Reviews</span>
             </div>
             <div class="mt-3">
-              <button class="btn btn-primary-custom add-review" @click="handleAddReview">Add Your Review</button>
+              <button class="btn btn-primary-custom add-review" @click="handleAddReview" aria-label="Add your review">Add Your Review</button>
             </div>
           </div>
         </div>
 
         <!-- Reviews Section -->
-        <div class="reviews mt-4">
+        <div class="reviews mt-4" aria-labelledby="review-section">
+          <h2 id="review-section" class="visually-hidden">Reviews</h2>
           <div v-for="(review, index) in reviews" :key="index" class="review-item">
             <div class="row">
               <!-- Left Section: Recommendation and User Info (6 columns) -->
               <div class="col-md-4 d-flex align-items-center">
                 <div>
-                  <span v-if="review.recommend" class="recommend-icon">✔️</span>
-                  <span v-else class="not-recommend-icon">✖︎</span>
+                  <span v-if="review.recommend" class="recommend-icon" aria-hidden="true">✔️</span>
+                  <span v-else class="not-recommend-icon" aria-hidden="true">✖︎</span>
                 </div>
                 <div class="ms-3">
                   <p class="review-recommend mb-1">
@@ -88,8 +91,8 @@
               <!-- Right Section: Rating & Review Comment (6 columns) -->
               <div class="col-md-2 d-flex align-items-center justify-content-between">
                 <div class="review-stars">
-                  <span v-for="n in review.rating" :key="n">★</span>
-                  <span v-for="n in 5 - review.rating" :key="n + review.rating">☆</span>
+                  <span v-for="n in review.rating" :key="n" aria-hidden="true">★</span>
+                  <span v-for="n in 5 - review.rating" :key="n + review.rating" aria-hidden="true">☆</span>
                 </div>
               </div>
               <div class="col-md-6 d-flex align-items-center justify-content-between">   
@@ -102,14 +105,22 @@
     </div>
 
     <!-- Modal for Adding Review -->
-    <div v-if="showModal" class="modal" @click.self="closeModal">
+    <div v-if="showModal" class="modal" @click.self="closeModal" role="dialog" aria-modal="true" aria-labelledby="add-review-title">
       <div class="modal-content">
-        <h3>Add Your Review</h3>
+        <h3 id="add-review-title">Add Your Review</h3>
         <div class="form-group">
-          <label>Rate this article</label>
-          <div class="star-rating">
+          <label for="rating">Rate this article</label>
+          <div class="star-rating" role="radiogroup" aria-labelledby="rating">
             <!-- If star is less than or equal to newReview.rating, the active class is applied (change the star's appearance by highlighting it) -->
-            <span v-for="star in 5" :key="star" class="star" :class="{ active: star <= newReview.rating }" @click="newReview.rating = star">★</span>
+            <span 
+              v-for="star in 5" 
+              :key="star" 
+              class="star" 
+              :class="{ active: star <= newReview.rating }" 
+              @click="newReview.rating = star"
+              role="radio"
+              :aria-checked="star === newReview.rating"
+              :tabindex="star === 1 ? 0 : -1">★</span>
           </div>
         </div>
         <div class="form-group">
@@ -122,8 +133,9 @@
           </div>
         </div>
         <div class="form-group mt-3 mb-4">
-          <label>Please write your review:</label>
-          <textarea class="form-control" v-model="newReview.comment"></textarea>
+          <label for="review-comment">Please write your review:</label>
+          <textarea id="review-comment" class="form-control" v-model="newReview.comment" aria-describedby="review-comment-desc"></textarea>
+          <p id="review-comment-desc" class="visually-hidden">Write a detailed review for others to read.</p>
         </div>
         <div class="d-flex justify-content-between">
           <button class="btn btn-primary" @click="submitReview">Submit</button>
@@ -411,7 +423,7 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125rem;
   color: #333;
   font-weight: bold;
 }
@@ -460,7 +472,7 @@ export default {
 }
 
 .article-text {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.8;
   margin-bottom: 15px;
 }
@@ -500,7 +512,7 @@ export default {
 
 .review-stars {
   color: #ffa500;
-  font-size: 18px;
+  font-size: 1.125rem;
   margin-bottom: 5px;
 }
 
@@ -554,10 +566,10 @@ button.btn-primary-custom:hover {
 }
 
 .modal-content {
-  background-color: #ffcf78;
+  background-color: #ffdb99;
   padding: 30px;
   border-radius: 15px;
-  width: 200%;
+  width: 50%;
 }
 
 .star-rating {

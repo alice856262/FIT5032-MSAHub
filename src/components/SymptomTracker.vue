@@ -1,17 +1,17 @@
 <template>
   <div class="offset-sd-1 offset-md-1">
-    <button class="btn btn-secondary mb-3" @click="goBack">← Back</button>
+    <button class="btn btn-secondary mb-3" @click="goBack" aria-label="Go back to Tool View">← Back</button>
   </div>
   <div class="container mb-5">
-    <h1>Symptom Tracker</h1>
+    <h1 id="symptomTrackerHeading">Symptom Tracker</h1>
     <p>You can use this tool to track your symptoms and monitor their severity over time.</p>
     <p>Simply fill in today's symptom and its severity below!</p>
 
     <!-- Symptom Entry Form -->
-    <form @submit.prevent="addSymptomEntry">
+    <form @submit.prevent="addSymptomEntry" aria-labelledby="symptomTrackerHeading">
       <div class="mb-3">
         <label for="symptom">Symptom</label>
-        <select v-model="newSymptom" id="symptom" class="form-control" @change="checkOtherSymptom" required>
+        <select v-model="newSymptom" id="symptom" class="form-control" @change="checkOtherSymptom" required aria-required="true">
           <option disabled value="">Please select a symptom type</option>
           <option value="Postural (Orthostatic) Hypotension">Postural (Orthostatic) Hypotension</option>
           <option value="Bradykinesia (Slowness of Movement)">Bradykinesia (Slowness of Movement)</option>
@@ -28,18 +28,18 @@
         <!-- If "Other" is selected, show input field for manual symptom entry -->
         <div v-if="isOtherSymptom" class="mt-2">
           <label for="otherSymptom">Specify Other Symptom</label>
-          <input v-model="otherSymptom" type="text" id="otherSymptom" class="form-control" required />
+          <input v-model="otherSymptom" type="text" id="otherSymptom" class="form-control" required aria-required="true" aria-label="Specify other symptom" />
         </div>
       </div>
 
       <div class="mb-3">
         <label for="severity">Severity (1-10)</label>
-        <select v-model.number="newSeverity" id="severity" class="form-control" required>
+        <select v-model.number="newSeverity" id="severity" class="form-control" required aria-required="true">
           <option disabled value="">Please select a severity level</option>
           <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary" aria-label="Submit symptom entry">Submit</button>
     </form>
     <hr />
 
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Comparison Paragraph -->
-    <div v-if="symptomComparisons.length" class="mt-5">
+    <div v-if="symptomComparisons.length" class="mt-5" aria-live="polite">
       <h3>Symptom Severity Summary</h3>
       <br>
       <p v-for="(comparison, index) in symptomComparisons" :key="index" class="symptom">
@@ -268,7 +268,7 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 
@@ -291,7 +291,7 @@ form {
 }
 
 .symptom {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.0;
 }
 </style>

@@ -1,3 +1,4 @@
+// // ------- Only for Basic Auth -------
 // // Initialize user data from localStorage
 // const userDataStore = JSON.parse(localStorage.getItem('userData')) || {};
 

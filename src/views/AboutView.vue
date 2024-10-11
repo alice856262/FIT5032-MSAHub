@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-3 mb-5">
+  <main class="container mt-3 mb-5">
     <div class="row justify-content-center">
       <div class="col-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
         <h1>About MSA Hub</h1>
@@ -21,11 +21,11 @@
         </ul>
         <h2>Contact Us</h2>
         <p>
-          If you have any questions or need support, feel free to contact us <router-link to="/contact-us">here</router-link>.
+          If you have any questions or need support, feel free to contact us <router-link to="/contact-us" aria-label="Contact us page">here</router-link>.
         </p>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -42,6 +42,7 @@
 
 h1, h2 {
   color: #333;
+  outline: none;
 }
 
 h1 {
@@ -54,7 +55,7 @@ h2 {
 
 p, ul {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 
@@ -63,7 +64,7 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+a:hover, a:focus {
   text-decoration: underline;
 }
 
@@ -73,7 +74,7 @@ a:hover {
   }
 
   p, ul {
-    font-size: 16px;
+    font-size: 1rem;
   }
 }
 
@@ -83,7 +84,7 @@ a:hover {
   }
 
   p, ul {
-    font-size: 17px;
+    font-size: 1.125rem;
   }
 }
 

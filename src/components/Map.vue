@@ -1,124 +1,148 @@
 <template>
-    <div class="container mt-3 mb-5">
-      <h1>Map</h1>
-      <p>Set start and end points, customize route options, and get turn-by-turn instructions.</p>
-  
-      <!-- Map Container with Sidebar Overlay -->
-      <div class="map-container">
-        <div ref="mapContainer" class="map"></div>
-  
-        <!-- Sidebar for Trip Information -->
-        <div v-if="tripInfo" class="trip-info-sidebar">
-          <button @click="closeTripInfo" class="btn btn-danger btn-sm close-btn">×</button>
-          <h5>Trip Information</h5>
-          <p><strong>Distance:</strong> {{ tripInfo.distance }} km</p>
-          <p><strong>Duration:</strong> {{ tripInfo.duration }} minutes</p>
-          <h6>Turn-by-Turn Instructions:</h6>
-          <ul class="steps">
-            <li v-for="(step, index) in tripInfo.steps" :key="index">
-              {{ index + 1 }}. {{ step }}
+  <div class="container mt-3 mb-5">
+    <h1>Map</h1>
+    <p>Set your start and end points, customise route options, and receive step-by-step directions.</p>
+    <p>Blue pins indicate neurology hospitals, clinics, or rehabilitation centers.</p>
+
+    <!-- Map Container with Sidebar Overlay -->
+    <div class="map-container" role="region" aria-label="Map displaying locations and routes">
+      <div ref="mapContainer" class="map" aria-label="Map" aria-live="polite"></div>
+
+      <!-- Sidebar for Trip Information -->
+      <div v-if="tripInfo" class="trip-info-sidebar" role="region" aria-label="Trip Information">
+        <button @click="closeTripInfo" class="btn btn-danger btn-sm close-btn" aria-label="Close Trip Information">×</button>
+        <h5><strong>Trip Information</strong></h5>
+        <p style="line-height: 1.0"><strong>Distance:</strong> {{ tripInfo.distance }} km</p>
+        <p style="line-height: 1.0"><strong>Duration:</strong> {{ tripInfo.duration }}</p>
+        <h6>Turn-by-Turn Instructions:</h6>
+        <ul class="steps" aria-label="Turn-by-Turn Instructions">
+          <li v-for="(step, index) in tripInfo.steps" :key="index">
+            {{ index + 1 }}. {{ step }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Controls for Search and Route -->
+    <div class="row controls">
+      <div class="col-md-6 col-sd-6"> 
+        <div>
+          <h4>Search Location</h4>
+          <label for="search-location" class="sr-only">Search Location</label>
+          <input 
+            id="search-location" 
+            type="text" 
+            v-model="searchQuery" 
+            placeholder="Search places of interest..." 
+            @input="fetchSuggestions" 
+            class="form-control" 
+            aria-autocomplete="list"
+            aria-controls="suggestions-list"
+            role="combobox" />
+          <ul id="suggestions-list" v-if="suggestions.length > 0" class="suggestions-list" role="listbox" aria-label="Search Suggestions">
+            <li v-for="(suggestion, index) in suggestions" 
+              :key="index" 
+              @click="selectSuggestion(suggestion)"
+              role="option"
+              @keydown.enter="selectSuggestion(suggestion)">
+              {{ suggestion.place_name }}
             </li>
           </ul>
-        </div>
-      </div>
-  
-      <!-- Controls for Search and Route -->
-      <div class="row controls">
-        <div class="col-md-6 col-sd-6"> 
-          <div>
-            <h4>Search Location</h4>
-            <input 
-              type="text" 
-              v-model="searchQuery" 
-              placeholder="Search places of interest..." 
-              @input="fetchSuggestions" 
-              class="form-control" 
-            />
-            <ul v-if="suggestions.length > 0" class="suggestions-list">
-              <li v-for="(suggestion, index) in suggestions" :key="index" @click="selectSuggestion(suggestion)">
-                {{ suggestion.place_name }}
-              </li>
-            </ul>
-            <div class="buttons">
-              <button class="btn btn-primary mt-2" @click="searchPlace">Search</button>
-              <button class="btn btn-secondary mt-2" @click="clearSearch">Clear</button>
-            </div>
+          <div class="buttons">
+            <button class="btn btn-primary mt-2" @click="searchPlace" aria-label="Search for location">Search</button>
+            <button class="btn btn-secondary mt-2" @click="clearSearch" aria-label="Clear search results">Clear</button>
           </div>
-        </div>  
-  
-        <!-- Start and End Point with Custom Options -->
-        <div class="col-md-6 col-sd-6">
-          <div>
-            <h4>Search Route</h4>
+        </div>
+      </div>  
+
+      <!-- Start and End Point with Custom Options -->
+      <div class="col-md-6 col-sd-6">
+        <div>
+          <h4>Search Route</h4>
+          <label for="start-location" class="sr-only">Start Location</label>
+          <input 
+            id="start-location" 
+            type="text" 
+            v-model="startPlaceName" 
+            placeholder="Start location" 
+            @input="fetchSuggestionsFor('start')" 
+            class="form-control mb-2" 
+            aria-autocomplete="list"
+            aria-controls="start-suggestions-list"
+            role="combobox" />
+          <ul id="start-suggestions-list" v-if="startSuggestions.length > 0" class="suggestions-list" role="listbox" aria-label="Start Location Suggestions">
+            <li v-for="(suggestion, index) in startSuggestions" 
+              :key="index" 
+              @click="setStartPoint(suggestion)"
+              role="option"
+              @keydown.enter="setStartPoint(suggestion)">
+              {{ suggestion.place_name }}
+            </li>
+          </ul>
+
+          <label for="end-location" class="sr-only">End Location</label>
+          <input 
+            id="end-location" 
+            type="text" 
+            v-model="endPlaceName" 
+            placeholder="End location" 
+            @input="fetchSuggestionsFor('end')" 
+            class="form-control mb-2" 
+            aria-autocomplete="list"
+            aria-controls="end-suggestions-list"
+            role="combobox" />
+          <ul id="end-suggestions-list" v-if="endSuggestions.length > 0" class="suggestions-list" role="listbox" aria-label="End Location Suggestions">
+            <li v-for="(suggestion, index) in endSuggestions" 
+              :key="index" 
+              @click="setEndPoint(suggestion)"
+              role="option"
+              @keydown.enter="setEndPoint(suggestion)">
+              {{ suggestion.place_name }}
+            </li>
+          </ul>
+
+          <!-- Custom Route Options -->
+          <div class="route-options mt-3">
+            <label for="transportation">Transportation Method:</label>
+            <select id="transportation" v-model="transportation" class="form-control mb-2" aria-label="Select transportation method">
+              <option value="driving">Driving</option>
+              <option value="walking">Walking</option>
+              <option value="cycling">Cycling</option>
+            </select>
+
+            <label for="departureTime">Departure Time:</label>
             <input 
-              id="start" 
-              type="text" 
-              v-model="startPlaceName" 
-              placeholder="Start location" 
-              @input="fetchSuggestionsFor('start')" 
-              class="form-control mb-2" 
-            />
-            <ul v-if="startSuggestions.length > 0" class="suggestions-list">
-              <li v-for="(suggestion, index) in startSuggestions" :key="index" @click="setStartPoint(suggestion)">
-                {{ suggestion.place_name }}
-              </li>
-            </ul>
-            <input 
-              id="end" 
-              type="text" 
-              v-model="endPlaceName" 
-              placeholder="End location" 
-              @input="fetchSuggestionsFor('end')" 
-              class="form-control mb-2" 
-            />
-            <ul v-if="endSuggestions.length > 0" class="suggestions-list">
-              <li v-for="(suggestion, index) in endSuggestions" :key="index" @click="setEndPoint(suggestion)">
-                {{ suggestion.place_name }}
-              </li>
-            </ul>
-  
-            <!-- Custom Route Options -->
-            <div class="route-options mt-3">
-              <label for="transportation">Transportation Method:</label>
-              <select v-model="transportation" class="form-control mb-2">
-                <option value="driving">Driving</option>
-                <option value="walking">Walking</option>
-                <option value="cycling">Cycling</option>
-              </select>
-  
-              <label for="departureTime">Departure Time:</label>
-              <input 
-                id="departureTime" 
-                type="datetime-local" 
-                v-model="departureTime" 
-                class="form-control mb-2"
-              />
-  
-              <label>Route Preferences:</label>
-              <div class="preferences">
-                <label>
-                  <input type="checkbox" v-model="avoidOptions.toll" /> Avoid Toll
-                </label>
-                <label>
-                  <input type="checkbox" v-model="avoidOptions.motorway" /> Avoid Motorway
-                </label>
-                <label>
-                  <input type="checkbox" v-model="avoidOptions.ferry" /> Avoid Ferry
-                </label>
-                <label>
-                  <input type="checkbox" v-model="avoidOptions.unpaved" /> Avoid Unpaved
-                </label>
-              </div>
-              <div class="buttons">
-                <button @click="getRoute" class="btn btn-primary mt-3">Get Route</button>
-                <button @click="clearRoute" class="btn btn-secondary mt-3">Clear</button>
-              </div>
+              id="departureTime" 
+              type="datetime-local" 
+              v-model="departureTime" 
+              class="form-control mb-2"
+              aria-label="Select departure time" />
+
+            <label>Route Preferences:</label>
+            <div class="preferences" role="group" aria-label="Route Preferences">
+              <label>
+                <input type="checkbox" v-model="avoidOptions.toll" /> Avoid Toll
+              </label>
+              <label>
+                <input type="checkbox" v-model="avoidOptions.motorway" /> Avoid Motorway
+              </label>
+              <label>
+                <input type="checkbox" v-model="avoidOptions.ferry" /> Avoid Ferry
+              </label>
+              <label>
+                <input type="checkbox" v-model="avoidOptions.unpaved" /> Avoid Unpaved
+              </label>
+            </div>
+            <div class="buttons">
+              <button @click="getRoute" class="btn btn-primary mt-3" aria-label="Get route">Get Route</button>
+              <button @click="clearRoute" class="btn btn-secondary mt-3" aria-label="Clear route">Clear</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-</template>  
+  </div>
+</template>
   
 <script>
 import mapboxgl from 'mapbox-gl';
@@ -158,7 +182,6 @@ export default {
   methods: {
     initializeMap() {
       mapboxgl.accessToken = token;
-      // mapboxgl.accessToken = "pk.eyJ1IjoiYWxpY2U4NTYyNjIiLCJhIjoiY20xa2k0aGUyMWF3NzJwcHM1dDN2N3cwbyJ9.slCEKgDWSFldQgbp0zxUYw";
 
       this.map = new mapboxgl.Map({
         container: this.$refs.mapContainer,
@@ -178,15 +201,18 @@ export default {
         const querySnapshot = await getDocs(collection(db, 'hospitals'));
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          // Create a marker for each hospital
-          const marker = new mapboxgl.Marker({ color: 'blue' })
-            .setLngLat([data.location.longitude, data.location.latitude])
-            .setPopup(new mapboxgl.Popup().setHTML(`
-              <p>${data.name}</p>
-              <p>Phone: ${data.phone}</p>
-            `)) // Show name and phone in popup
-            .addTo(this.map);
-          this.hospitalMarkers.push(marker);
+          if (data.location && data.location.longitude && data.location.latitude) {
+            // Create a marker for each hospital
+            const marker = new mapboxgl.Marker({ color: 'blue' })
+              .setLngLat([data.location.longitude, data.location.latitude])
+              .setPopup(new mapboxgl.Popup().setHTML(`
+                <p>${data.name}</p>
+                <p>Phone: ${data.phone}</p>`))
+              .addTo(this.map);
+            this.hospitalMarkers.push(marker);
+          } else {
+            console.warn(`Hospital data for ${doc.id} is missing coordinates.`);
+          }
         });
       } catch (error) {
         console.error('Error loading hospital locations:', error);
@@ -228,7 +254,7 @@ export default {
     selectSuggestion(suggestion) {
       this.addPin(suggestion);
       this.searchQuery = suggestion.place_name;
-      this.suggestions = []; // Clear suggestions after selection
+      this.suggestions = [];
 
       // Adjust the map to the selected location
       const { center, bbox } = suggestion;
@@ -400,7 +426,9 @@ export default {
         // Display trip information (distance and duration)
         this.tripInfo = {
           distance: (data.routes[0].distance / 1000).toFixed(2), // Convert meters to kilometers
-          duration: (data.routes[0].duration / 60).toFixed(2), // Convert seconds to minutes
+          duration: data.routes[0].duration >= 3600 
+            ? `${(data.routes[0].duration / 3600).toFixed(2)} hours` // Convert seconds to hours if >= 60 mins
+            : `${(data.routes[0].duration / 60).toFixed(2)} minutes`, // Convert seconds to minutes if < 60 mins
           steps: data.routes[0].legs[0].steps.map(
             (step) => `${step.maneuver.instruction} (${(step.distance / 1000).toFixed(2)} km)`
           ),
@@ -449,8 +477,18 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
+}
+
+.btn-primary {
+  background-color: #e5533d;
+  border-color: #e5533d;
+}
+
+.btn-primary:hover {
+  background-color: #c94431;
+  border-color: #c94431;
 }
 
 .map-container {
@@ -491,6 +529,17 @@ p {
 .controls {
   margin: 0 auto;
   text-align: center;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .form-control {

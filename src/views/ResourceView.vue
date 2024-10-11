@@ -1,27 +1,33 @@
 <template>
   <div class="resource-container">
     <!-- Sidebar with navigation buttons -->
-    <aside class="sidebar">
-      <div class="btn-container">
+    <aside class="sidebar" aria-label="Resource Navigation">
+      <div class="btn-container" role="tablist">
         <button 
           class="btn-nav" 
           :class="{ active: currentView === 'Articles' }" 
-          @click="currentView = 'Articles'">
-          <span class="icon">📄</span>
+          @click="currentView = 'Articles'"
+          :aria-selected="currentView === 'Articles'"
+          role="tab"
+          aria-label="View Articles">
+          <span class="icon" aria-hidden="true">📄</span>
           <span class="text">Article</span>
         </button>
         <button 
           class="btn-nav" 
           :class="{ active: currentView === 'Maps' }" 
-          @click="currentView = 'Maps'">
-          <span class="icon">🗺️</span>
+          @click="currentView = 'Maps'"
+          :aria-selected="currentView === 'Maps'"
+          role="tab"
+          aria-label="View Maps">
+          <span class="icon" aria-hidden="true">🗺️</span>
           <span class="text">Map</span>
         </button>
       </div>
     </aside>
 
     <!-- Main content area for Articles or Maps -->
-    <main class="content">
+    <main class="content" aria-live="polite" aria-atomic="true">
       <!-- Show the Articles or Maps component based on currentView -->
       <component :is="currentViewComponent" />
     </main>
@@ -66,13 +72,13 @@ export default {
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center the button container */
+  align-items: center;
 }
 
 .btn-container {
   position: sticky;
-  top: 50%; /* Stick the buttons container in the middle */
-  transform: translateY(-50%); /* Center the buttons container vertically */
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -83,7 +89,7 @@ export default {
   width: 100px;
   height: 95px;
   display: flex;
-  flex-direction: column; /* Stack icon and text vertically */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 15px 20px;
@@ -96,6 +102,10 @@ export default {
   color: #333;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.btn-nav:focus {
+  outline: 3px solid #ffdb99;
 }
 
 .btn-nav .icon {
@@ -113,9 +123,9 @@ export default {
 }
 
 .btn-nav.active {
-  background: #ffcf78;
+  background: #ffdb99;
   color: #333;
-  box-shadow: 1px 1px 3px #ffcf78, -1px -1px 3px #ffcf78;
+  box-shadow: 1px 1px 3px #ffdb99, -1px -1px 3px #ffdb99;
 }
 
 .content {

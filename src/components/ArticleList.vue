@@ -3,7 +3,7 @@
     <h1>Article</h1>
     <p>Click any article title to view details, or you can search and sort our collection of articles by title, type, or date.</p>
     <!-- Interactive Table for All Articles -->
-    <interactive-table :rows="articles" :columns="columns" />
+    <interactive-table :rows="articles" :columns="columns" aria-label="Table listing articles with options to search and sort"/>
   </div>
 </template>
 
@@ -20,9 +20,9 @@ export default {
   setup() {
     const articles = ref([]);
     const columns = ref([
-      { key: 'title', label: 'Article Title', searchable: true },
-      { key: 'type', label: 'Article Type', searchable: true },
-      { key: 'time', label: 'Publish Date', searchable: true },
+      { key: 'title', label: 'Article Title', searchable: true, ariaLabel: "Sort by Article Title" },
+      { key: 'type', label: 'Article Type', searchable: true, ariaLabel: "Sort by Article Type" },
+      { key: 'time', label: 'Publish Date', searchable: true, ariaLabel: "Sort by Publish Date" },
     ]);
 
     // Function to format date to dd/mm/yyyy
@@ -70,7 +70,22 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
+}
+
+button, [role="button"] {
+  background-color: #e5533d;
+  border-color: #e5533d;
+  font-weight: bold;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover, [role="button"]:hover {
+  background-color: #c94431;
+  border-color: #c94431;
 }
 </style>

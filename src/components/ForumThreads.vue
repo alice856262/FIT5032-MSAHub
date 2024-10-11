@@ -1,44 +1,48 @@
 <template>
   <div>
     <h2>{{ forumTitle }}</h2>
-    <button class="btn btn-primary mb-3" @click="openModal">Start a New Thread</button>
+    <button class="btn btn-primary mb-3" @click="openModal" aria-label="Start a new thread">Start a New Thread</button>
 
     <!-- Modal for creating a new thread -->
-    <div v-if="showModal" class="modal">
+    <div v-if="showModal" class="modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
       <div class="modal-content">
-        <h3>Start a New Thread</h3>
+        <h3 id="modal-title">Start a New Thread</h3>
         <form @submit.prevent="createThread">
           <div class="form-group">
             <label for="threadTitle">Thread Title</label>
-            <input type="text" id="threadTitle" v-model="newThreadTitle" class="form-control" required />
+            <input type="text" id="threadTitle" v-model="newThreadTitle" class="form-control" required aria-describedby="threadTitleDescription" />
           </div>
           <div class="form-group">
             <label for="initialMessage">Message</label>
-            <textarea id="initialMessage" v-model="newThreadMessage" class="form-control" required></textarea>
+            <textarea id="initialMessage" v-model="newThreadMessage" class="form-control" required aria-describedby="initialMessageDescription"></textarea>
           </div>
           <div class="form-group">
-            <input type="checkbox" id="showName" v-model="showName" />
+            <input type="checkbox" id="showName" v-model="showName" aria-label="Show my name on the thread" />
             <label for="showName">Show my name</label>
           </div>
-          <button type="submit" class="btn btn-primary mt-2">Create Thread</button>
-          <button type="button" class="btn btn-secondary mt-2" @click="closeModal">Cancel</button>
+          <button type="submit" class="btn btn-primary mt-2 me-3" aria-label="Create thread">Create Thread</button>
+          <button type="button" class="btn btn-secondary mt-2" @click="closeModal" aria-label="Cancel creating thread">Cancel</button>
         </form>
       </div>
     </div>
 
     <!-- Search Bar -->
     <div class="search-bar mb-3">
-      <input type="text" v-model="searchQuery" placeholder="Search for threads..." class="form-control" />
+      <label for="searchQuery" class="sr-only">Search for threads</label>
+      <input type="text" id="searchQuery" v-model="searchQuery" placeholder="Search for threads..." class="form-control" aria-label="Search threads" />
     </div>
 
     <!-- Two-column layout for threads and details -->
-    <div class="thread-container">
+    <div class="thread-container" id="main-content">
       <!-- Left column: Thread List -->
       <div class="thread-list">
         <h3>Threads</h3>
         <ul>
           <li v-for="thread in filteredThreads" :key="thread.id">
-            <a @click="viewThread(thread.id)" href="javascript:void(0)">
+            <a @click="viewThread(thread.id)" 
+              href="javascript:void(0)" 
+              role="button" 
+              aria-label="View details for thread titled {{ thread.title }}">
               {{ thread.title }}<br />
               <small>Created on: {{ formatTimestamp(thread.createdAt) }}</small>
             </a>
@@ -48,7 +52,7 @@
 
       <!-- Right column: Thread Details -->
       <div class="thread-details" v-if="viewMode === 'details'">
-        <button class="btn btn-secondary mb-3" @click="backToList">Close Thread</button>
+        <button class="btn btn-secondary mb-3" @click="backToList" aria-label="Close thread details and go back to thread list">Close Thread</button>
         <h3>{{ currentThread.title }}</h3>
         <p>Started by: {{ currentThread.displayName }} on {{ formatTimestamp(currentThread.createdAt) }}</p>
         <div class="messages">
@@ -60,13 +64,13 @@
         <form @submit.prevent="addMessage">
           <div class="form-group">
             <label for="newMessage">Leave a message</label>
-            <textarea id="newMessage" v-model="newMessage" class="form-control" required></textarea>
+            <textarea id="newMessage" v-model="newMessage" class="form-control" required aria-describedby="newMessageDescription"></textarea>
           </div>
           <div class="form-group">
-            <input type="checkbox" id="showMessageName" v-model="showMessageName" />
+            <input type="checkbox" id="showMessageName" v-model="showMessageName" aria-label="Show my name on this message" />
             <label for="showMessageName">Show my name</label>
           </div>
-          <button type="submit" class="btn btn-primary mt-2">Send Message</button>
+          <button type="submit" class="btn btn-primary mt-2" aria-label="Send message">Send Message</button>
         </form>
       </div>
     </div>
@@ -75,11 +79,11 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { db } from '../config/firebaseConfig.js'; // Import Firestore configuration
-import { collection, addDoc, getDocs, doc, updateDoc, query, where } from 'firebase/firestore'; // Firestore functions
-import { Timestamp } from 'firebase/firestore'; // Import Firestore Timestamp
-import { useAuth } from '../router/useAuth.js'; // Import useAuth to get user details
-import { useRouter, useRoute } from 'vue-router'; // Import useRouter and useRoute from vue-router
+import { db } from '../config/firebaseConfig.js';
+import { collection, addDoc, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
+import { useAuth } from '../router/useAuth.js';
+import { useRouter, useRoute } from 'vue-router';
 
 const forumTitle = ref('');
 const threads = ref([]);
@@ -220,7 +224,7 @@ const formatTimestamp = (timestamp) => {
 };
 
 onMounted(() => {
-  forumType.value = route.params.forumType; // Set forumType from route params
+  forumType.value = route.params.forumType;
   fetchThreads(); // Fetch threads from Firestore when the component is mounted
 });
 </script>
@@ -240,10 +244,30 @@ onMounted(() => {
 }
 
 .modal-content {
-  background-color: #ffcf78;
+  background-color: #ffdb99;
   padding: 30px;
   border-radius: 15px;
   width: 50%;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
 }
 
 .thread-container {

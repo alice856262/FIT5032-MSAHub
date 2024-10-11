@@ -1,6 +1,7 @@
 <template>
   <div class="container mt-3 mb-5">
     <h1>Community Forums</h1>
+    <p>The MSA community offers a platform to share experiences and support individuals navigate the challenges of MSA.</p>
     <p>Join a forum to connect with others in your community:</p>
 
     <div class="row mt-4">
@@ -12,7 +13,7 @@
             <p class="card-text">
               Connect with other MSA patients to share experiences, support, and resources.
             </p>
-            <button class="btn btn-primary" @click="joinForum('patient')">Join Patient Forum</button>
+            <button class="btn btn-primary" @click="joinForum('patient')" aria-label="Join the Patient Forum">Join Patient Forum</button>
           </div>
         </div>
       </div>
@@ -25,7 +26,7 @@
             <p class="card-text">
               Join the caregiver community to share advice, resources, and support.
             </p>
-            <button class="btn btn-primary" @click="joinForum('caregiver')">Join Caregiver Forum</button>
+            <button class="btn btn-primary" @click="joinForum('caregiver')" aria-label="Join the Caregiver Forum">Join Caregiver Forum</button>
           </div>
         </div>
       </div>
@@ -38,7 +39,7 @@
             <p class="card-text">
               Engage with other professionals and share your expertise and insights.
             </p>
-            <button class="btn btn-primary" @click="joinForum('professional')">Join Professional Forum</button>
+            <button class="btn btn-primary" @click="joinForum('professional')" aria-label="Join the Professional Forum">Join Professional Forum</button>
           </div>
         </div>
       </div>
@@ -90,11 +91,12 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 
 .card {
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -106,7 +108,7 @@ p {
 
 .card-text {
   color: #666;
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .btn-primary {

@@ -6,34 +6,37 @@
 
     <!-- Modal for adding or editing events -->
     <div v-if="showModal" class="modal" @click.self="closeModal">
-      <div class="modal-content">
+      <div class="modal-content" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDesc" aria-modal="true">
         <form @submit.prevent="saveEvent">
-          <h3>{{ editingEvent ? 'Edit Event' : 'Add Event' }}</h3>
+          <h3 id="modalTitle">{{ editingEvent ? 'Edit Event' : 'Add Event' }}</h3>
+          <p id="modalDesc">Use this form to add or edit a treatment event in your calendar.</p>
           <div class="form-group">
-            <label>Title:</label>
-            <input type="text" class="form-control" v-model="eventForm.title" required />
+            <label for="title">Title:</label>
+            <input type="text" id="title" class="form-control" v-model="eventForm.title" aria-label="Event Title" aria-required="true" required />
           </div>
           <div class="form-group">
-            <label>Description:</label>
-            <textarea class="form-control" v-model="eventForm.description"></textarea>
+            <label for="description">Description:</label>
+            <textarea id="description" class="form-control" v-model="eventForm.description" aria-label="Event Description"></textarea>
           </div>
           <div class="form-group">
-            <label><input type="checkbox" v-model="eventForm.allDay" /> All Day Event</label>
+            <label>
+              <input type="checkbox" v-model="eventForm.allDay" aria-label="All Day Event Checkbox" /> All Day Event
+            </label>
           </div>
           <div v-if="!eventForm.allDay">
             <div class="form-group">
-              <label>Start Time:</label>
-              <input type="datetime-local" class="form-control" v-model="eventForm.startTime" required />
+              <label for="startTime">Start Time:</label>
+              <input type="datetime-local" id="startTime" class="form-control" v-model="eventForm.startTime" aria-label="Event Start Time" required />
             </div>
             <div class="form-group">
-              <label>End Time:</label>
-              <input type="datetime-local" class="form-control" v-model="eventForm.endTime" required />
+              <label for="endTime">End Time:</label>
+              <input type="datetime-local" id="endTime" class="form-control" v-model="eventForm.endTime" aria-label="Event End Time" required />
             </div>
           </div>
           <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-primary" type="submit">{{ editingEvent ? 'Save Changes' : 'Add Event' }}</button>
-            <button class="btn btn-secondary" type="button" @click="closeModal">Cancel</button>
-            <button v-if="editingEvent" class="btn btn-primary" type="button" @click="deleteEvent">Delete Event</button>
+            <button class="btn btn-primary" type="submit" aria-label="Save Event">{{ editingEvent ? 'Save Changes' : 'Add Event' }}</button>
+            <button class="btn btn-secondary" type="button" @click="closeModal" aria-label="Cancel">Cancel</button>
+            <button v-if="editingEvent" class="btn btn-primary" type="button" @click="deleteEvent" aria-label="Delete Event">Delete Event</button>
           </div>
         </form>
       </div>
@@ -49,7 +52,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, Timestamp, query, where } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
-import { useAuth } from '../router/useAuth.js'; // Import useAuth for authentication
+import { useAuth } from '../router/useAuth.js';
 
 export default {
   components: {
@@ -82,9 +85,7 @@ export default {
   },
   methods: {
     fetchEvents() {
-      const { currentUser } = useAuth(); // Get the current user using useAuth composable
-
-      // Ensure we only proceed if there is a logged-in user
+      const { currentUser } = useAuth();
       if (!currentUser.value) return;
 
       // Fetch events for the current user
@@ -275,7 +276,7 @@ h1 {
 
 p {
   color: #666;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
 }
 
@@ -297,7 +298,7 @@ p {
 }
 
 .modal-content {
-  background-color: #ffcf78;
+  background-color: #ffdb99;
   padding: 30px;
   border-radius: 15px;
   width: 50%;

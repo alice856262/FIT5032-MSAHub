@@ -3,37 +3,32 @@
     <div class="row">
       <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-6 offset-sm-1 offset-md-2 offset-lg-3 offset-xl-3">
         <h1 class="display-4 mb-4 text-center">Login</h1>
-        <form @submit.prevent="handleLogin">  <!-- .prevent: prevents browser reloads page when the form is submitted -->
+        <form @submit.prevent="handleLogin" aria-labelledby="login-form-heading">  <!-- .prevent: prevents browser reloads page when the form is submitted -->
           <!-- Email Field -->
           <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" v-model="email" required />
+            <input type="email" class="form-control" id="email" v-model="email" required aria-required="true" aria-describedby="email-desc" />
           </div>
           
           <!-- Password Field -->
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" v-model="password" required />
+            <input type="password" class="form-control" id="password" v-model="password" required aria-required="true" aria-describedby="password-desc" />
           </div>
 
           <!-- Login Button -->
           <div class="mt-5 mb-3 text-center">
-            <button type="submit" class="btn btn-primary-login">Login</button>
+            <button type="submit" class="btn btn-primary-login" aria-label="Login to your account">Login</button>
           </div>
-
-          <!-- Google Sign-in -->
-          <!-- <div class="mb-3 text-center">
-            <img src="/src/assets/google_signin.png" alt="Sign in with Google" class="google-signin" @click="handleGoogleLogin" />
-          </div> -->
 
           <!-- Forgot Password Link -->
           <div class="mb-3 text-center">
-            <a href="#" @click.prevent="handleForgotPasswordLinkClick">Forgot Password?</a>
+            <a href="#" class="custom-link" @click.prevent="handleForgotPasswordLinkClick" aria-label="Forgot password? Reset it here.">Forgot Password?</a>
           </div>
           
           <!-- Register Link -->
           <div class="text-center">
-            <p>Don't have an account? <router-link to="/register">Register here!</router-link></p>
+            <p>Don't have an account? <router-link to="/register" class="custom-link" aria-label="Register a new account">Register here!</router-link></p>
           </div>
         </form>
       </div>
@@ -41,15 +36,15 @@
   </div>
 
   <!-- Forgot Password Modal -->
-  <div class="modal" v-if="showForgotPasswordModal">
-    <div class="modal-content">
-      <h3 class="mb-4">Send Reset Password Link</h3>
+  <div class="modal" v-if="showForgotPasswordModal" aria-labelledby="forgot-password-title" aria-modal="true" role="dialog">
+    <div class="modal-content" @keydown.esc="closeForgotPasswordModal">
+      <h3 class="mb-4" id="forgot-password-title">Send Reset Password Link</h3>
       <div class="mb-3">
-        <input type="email" v-model="resetEmail" placeholder="Enter your email" class="form-control" />
+        <input type="email" v-model="resetEmail" placeholder="Enter your email" class="form-control" aria-required="true" aria-describedby="reset-email-desc"/>
       </div>
       <div class="d-flex justify-content-between">
-        <button class="btn btn-primary" @click="handleForgotPassword">Send</button>
-        <button class="btn btn-secondary" @click="closeForgotPasswordModal">Cancel</button>
+        <button class="btn btn-primary" @click="handleForgotPassword" aria-label="Send password reset email">Send</button>
+        <button class="btn btn-secondary" @click="closeForgotPasswordModal" aria-label="Cancel password reset">Cancel</button>
       </div>
     </div>
   </div>
@@ -82,6 +77,10 @@ const password = ref('');
 const { login, loginWithGoogle } = useAuth();
 const showForgotPasswordModal = ref(false);
 const resetEmail = ref('');
+
+// const handleLogin = async () => {
+//   await login(email.value, password.value);
+// };
 
 const handleLogin = async () => {
   await login(email.value, password.value);
@@ -131,6 +130,11 @@ button.btn-primary-login:hover {
   border-color: #e5533d;
 }
 
+.custom-link {
+  color: #e5533d;
+  font-weight: bold;
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -141,10 +145,11 @@ button.btn-primary-login:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
 }
 
 .modal-content {
-  background-color: #ffcf78;
+  background-color: #ffdb99;
   padding: 30px;
   border-radius: 15px;
   width: 90%;

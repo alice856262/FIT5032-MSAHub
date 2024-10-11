@@ -1,112 +1,112 @@
 <template>
-    <div class="container mt-5" v-if="user">
-      <div class="row">
-        <!-- Left Side: Profile Picture and Upload Icon -->
-        <div class="col-md-4 text-center">
-          <!-- Upper Row: Profile Picture -->
-          <div class="row mb-3">
-            <div class="col-12 d-flex">
-              <div class="profile-picture">
-                <img :src="user.profilePicture || '/src/assets/profile_pic.png'" alt="Profile Picture" class="img-fluid rounded-circle" />
-              </div>
-            </div>
-          </div>
-          <!-- Lower Row: Upload Icon -->
-          <div class="row mb-3">
-            <div class="col-12 d-flex justify-content-end">
-              <p class="upload-icon" @click="triggerFileUpload">+</p>
-              <input type="file" ref="fileInput" @change="uploadProfilePicture" class="d-none" />
+  <div class="container mt-5" v-if="user">
+    <div class="row">
+      <!-- Left Side: Profile Picture and Upload Icon -->
+      <div class="col-md-4 text-center">
+        <!-- Upper Row: Profile Picture -->
+        <div class="row mb-3">
+          <div class="col-12 d-flex">
+            <div class="profile-picture">
+              <img :src="user.profilePicture || '/src/assets/profile_pic.png'" alt="User's profile picture" class="img-fluid rounded-circle" />
             </div>
           </div>
         </div>
-        
-        <!-- Right Side: Personal Info -->
-        <div class="col-md-8 col-sd-12">
-          <h2 class="mb-4">Personal Info</h2>
-          <div class="row mb-3">
-            <div class="col-5 d-flex align-items-center justify-content-between">
-              <strong>First Name:</strong>
-              <span class="ms-3" v-if="!editing.firstName">{{ user.firstName }}</span>
-              <input v-if="editing.firstName" v-model="user.firstName" class="form-control" />
-              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('firstName')">
-                {{ editing.firstName ? '✔️' : '🖊️' }}
-              </span>
-            </div>
-            <div class="col-7 d-flex align-items-center justify-content-between">
-              <strong>Phone Number:</strong>
-              <span class="ms-3" v-if="!editing.phone">{{ user.phone }}</span>
-              <input v-if="editing.phone" v-model="user.phone" class="form-control" />
-              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('phone')">
-                {{ editing.phone ? '✔️' : '🖊️' }}
-              </span>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-5 d-flex align-items-center justify-content-between">
-              <strong>Last Name:</strong>
-              <span class="ms-3" v-if="!editing.lastName">{{ user.lastName }}</span>
-              <input v-if="editing.lastName" v-model="user.lastName" class="form-control" />
-              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('lastName')">
-                {{ editing.lastName ? '✔️' : '🖊️' }}
-              </span>
-            </div>
-            <div class="col-7 d-flex align-items-center justify-content-between">
-              <strong>Date of Birth:</strong>
-              <span class="ms-3" v-if="!editing.dob">{{ user.dob.toLocaleDateString() }}</span>
-              <input v-if="editing.dob" type="date" v-model="user.dob" class="form-control" />
-              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('dob')">
-                {{ editing.dob ? '✔️' : '🖊️' }}
-              </span>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-5 d-flex align-items-center justify-content-between">
-              <strong>Gender:</strong>
-              <span class="ms-3" v-if="!editing.gender">{{ user.gender }}</span>
-              <select v-if="editing.gender" v-model="user.gender" class="form-select">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('gender')">
-                {{ editing.gender ? '✔️' : '🖊️' }}
-              </span>
-            </div>
-            <div class="col-7 d-flex align-items-center justify-content-between">
-              <strong>Address:</strong>
-              <span class="ms-3" v-if="!editing.address">{{ user.address }}</span>
-              <input v-if="editing.address" v-model="user.address" class="form-control" />
-              <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('address')">
-                {{ editing.address ? '✔️' : '🖊️' }}
-              </span>
-            </div>
+        <!-- Lower Row: Upload Icon -->
+        <div class="row mb-3">
+          <div class="col-12 d-flex justify-content-end">
+            <p class="upload-icon" @click="triggerFileUpload" aria-label="Upload profile picture" role="button">+</p>
+            <input type="file" ref="fileInput" @change="uploadProfilePicture" class="d-none" aria-hidden="true"/>
           </div>
         </div>
       </div>
       
-      <!-- Ratings and Reviews -->
-      <div class="row">
-        <div class="col-md-12">
-          <h2 class="mb-4">My Ratings & Reviews</h2>
-          <div v-for="(review, index) in userReviews" :key="index" class="review-item mb-4">
-            <strong>{{ review.title }}</strong>
-            <p>I recommend this article: {{ review.recommend ? 'Yes' : 'No' }}</p>
-            <p>Date: {{ review.date.toLocaleDateString() }}</p>
-            <p>Rate: 
-              <span class="review-stars">
-                <span v-for="n in review.rating" :key="n">★</span>
-                <span v-for="n in 5 - review.rating" :key="n + review.rating">☆</span>
-              </span>
-            </p>
-            <p>Review: "{{ review.comment }}"</p>
+      <!-- Right Side: Personal Info -->
+      <div class="col-md-8 col-sd-12">
+        <h2 class="mb-4">Personal Info</h2>
+        <div class="row mb-3">
+          <div class="col-5 d-flex align-items-center justify-content-between">
+            <label for="firstName"><strong>First Name:</strong></label>
+            <span class="ms-3" v-if="!editing.firstName">{{ user.firstName }}</span>
+            <input v-if="editing.firstName" id="firstName" v-model="user.firstName" class="form-control" />
+            <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('firstName')" role="button" :aria-label="editing.firstName ? 'Save first name' : 'Edit first name'">
+              {{ editing.firstName ? '✔️' : '🖊️' }}
+            </span>
+          </div>
+          <div class="col-7 d-flex align-items-center justify-content-between">
+            <label for="phone"><strong>Phone Number:</strong></label>
+            <span class="ms-3" v-if="!editing.phone">{{ user.phone }}</span>
+            <input v-if="editing.phone" id="phone" v-model="user.phone" class="form-control" />
+            <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('phone')" role="button" :aria-label="editing.phone ? 'Save phone number' : 'Edit phone number'">
+              {{ editing.phone ? '✔️' : '🖊️' }}
+            </span>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-5 d-flex align-items-center justify-content-between">
+            <label for="lastName"><strong>Last Name:</strong></label>
+            <span class="ms-3" v-if="!editing.lastName">{{ user.lastName }}</span>
+            <input v-if="editing.lastName" id="lastName" v-model="user.lastName" class="form-control" />
+            <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('lastName')" role="button" :aria-label="editing.lastName ? 'Save last name' : 'Edit last name'">
+              {{ editing.lastName ? '✔️' : '🖊️' }}
+            </span>
+          </div>
+          <div class="col-7 d-flex align-items-center justify-content-between">
+            <label for="dob"><strong>Date of Birth:</strong></label>
+            <span class="ms-3" v-if="!editing.dob">{{ user.dob.toLocaleDateString() }}</span>
+            <input v-if="editing.dob" id="dob" type="date" v-model="user.dob" class="form-control" />
+            <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('dob')" role="button" :aria-label="editing.dob ? 'Save date of birth' : 'Edit date of birth'">
+              {{ editing.dob ? '✔️' : '🖊️' }}
+            </span>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-5 d-flex align-items-center justify-content-between">
+            <label for="gender"><strong>Gender:</strong></label>
+            <span class="ms-3" v-if="!editing.gender">{{ user.gender }}</span>
+            <select v-if="editing.gender" id="gender" v-model="user.gender" class="form-select">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('gender')" role="button" :aria-label="editing.gender ? 'Save gender' : 'Edit gender'">
+              {{ editing.gender ? '✔️' : '🖊️' }}
+            </span>
+          </div>
+          <div class="col-7 d-flex align-items-center justify-content-between">
+            <label for="address"><strong>Address:</strong></label>
+            <span class="ms-3" v-if="!editing.address">{{ user.address }}</span>
+            <input v-if="editing.address" id="address" v-model="user.address" class="form-control" />
+            <span class="ms-auto" style="cursor: pointer;" @click="toggleEditMode('address')" role="button" :aria-label="editing.address ? 'Save address' : 'Edit address'">
+              {{ editing.address ? '✔️' : '🖊️' }}
+            </span>
           </div>
         </div>
       </div>
     </div>
-    <!-- Display loading if user data is not available -->
-    <div v-else>  <!-- Fallback content: if the user object is not yet loaded, a loading message is displayed -->
-      <p>Loading...</p>
+    
+    <!-- Ratings and Reviews -->
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="mb-4">My Ratings & Reviews</h2>
+        <div v-for="(review, index) in userReviews" :key="index" class="review-item mb-4">
+          <strong>{{ review.title }}</strong>
+          <p>I recommend this article: {{ review.recommend ? 'Yes' : 'No' }}</p>
+          <p>Date: {{ review.date.toLocaleDateString() }}</p>
+          <p>Rate: 
+            <span class="review-stars">
+              <span v-for="n in review.rating" :key="n" aria-hidden="true">★</span>
+              <span v-for="n in 5 - review.rating" :key="n + review.rating" aria-hidden="true">☆</span>
+            </span>
+          </p>
+          <p>Review: "{{ review.comment }}"</p>
+        </div>
+      </div>
     </div>
+  </div>
+  <!-- Display loading if user data is not available -->
+  <div v-else>  <!-- Fallback content: if the user object is not yet loaded, a loading message is displayed -->
+    <p>Loading...</p>
+  </div>
 </template>
 
 <script setup>
@@ -247,58 +247,62 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+:focus {
+  outline: 2px solid #333;
+}
+
 .container {
-    max-width: 1000px;
+  max-width: 1000px;
 }
 
 .profile-picture {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: -30px;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -30px;
 }
 
 .profile-picture img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .upload-icon {
-    background-color: #333;
-    color: white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    border: 3px solid #fff;
-    margin-right: 15px;
-    cursor: pointer;
+  background-color: #333;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 3px solid #fff;
+  margin-right: 15px;
+  cursor: pointer;
 }
 
 .review-item {
-    background-color: #f6f4f3;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #f6f4f3;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .review-stars {
-    color: #f7a346;
+  color: #f7a346;
 }
 
 .review-text {
-    font-size: 16px;
+  font-size: 16px;
 }
 </style>
