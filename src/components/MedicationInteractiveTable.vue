@@ -12,6 +12,7 @@
     <!-- Medication table -->
     <table class="table" role="table">
       <thead>
+        <!-- loop through columns, enabling sorting by clicking on headers, with ascending/descending indicators -->
         <tr>
           <th v-for="(column, index) in columns" 
             :key="index" 
@@ -24,6 +25,7 @@
             <span v-if="currentSort.column === column.key">{{ currentSort.asc ? '▲' : '▼' }}</span>
           </th>
         </tr>
+        <!-- add individual search boxes for each searchable column -->
         <tr>
           <th v-for="(column, index) in columns" :key="'search-' + index">
             <input

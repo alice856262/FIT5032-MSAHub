@@ -163,12 +163,7 @@ export default {
       endPlaceName: '',
       transportation: 'driving', // Default transportation method
       departureTime: '',
-      avoidOptions: {
-        toll: false,
-        motorway: false,
-        ferry: false,
-        unpaved: false,
-      },
+      avoidOptions: { toll: false, motorway: false, ferry: false, unpaved: false },
       suggestions: [],
       startSuggestions: [],
       endSuggestions: [],
@@ -190,7 +185,7 @@ export default {
         zoom: 12, // Initial zoom level
       });
 
-      // Add navigation control to the map (zoom and rotation controls).
+      // Add navigation control to the map (zoom and rotation controls)
       this.map.addControl(new mapboxgl.NavigationControl());
 
       // Load and display hospital locations
@@ -218,6 +213,7 @@ export default {
         console.error('Error loading hospital locations:', error);
       }
     },
+    // Fetch location suggestions from Mapbox based on searchQuery
     async fetchSuggestions() {
       if (this.searchQuery.trim() === '') {
         this.suggestions = [];
@@ -234,6 +230,7 @@ export default {
         console.error('Error fetching suggestions:', error);
       }
     },
+    // Fetch location suggestions from Mapbox based on searchQuery, but specific to start or end locations
     async fetchSuggestionsFor(field) {
       const query = field === 'start' ? this.startPlaceName : this.endPlaceName;
       if (query.trim() === '') {
@@ -251,6 +248,7 @@ export default {
         console.error('Error fetching suggestions:', error);
       }
     },
+    // Add a pin point for a selected location and adjust the map view
     selectSuggestion(suggestion) {
       this.addPin(suggestion);
       this.searchQuery = suggestion.place_name;
@@ -282,13 +280,13 @@ export default {
         alert('Please enter a location to search.');
         return;
       }
-      this.fetchSuggestions(); // Fetch suggestions based on the search query
+      this.fetchSuggestions();  // fetch suggestions based on the search query
     },
     clearSearch() {
       this.searchQuery = '';
       this.suggestions = [];
       this.pins.forEach(pin => pin.marker.remove());
-      this.pins = []; // Clear the pins array
+      this.pins = [];  // clear the pins array
     },
     addPin(suggestion) {
       const { center, place_name } = suggestion;
@@ -306,29 +304,31 @@ export default {
         coordinates: center,
       });
     },
+    // Set startPoint to the coordinates of the selected start location
     setStartPoint(suggestion) {
       const { center, place_name } = suggestion;
-      this.startPoint = `${center[0]},${center[1]}`; // Set coordinates
-      this.startPlaceName = place_name; // Set place name
-      this.startSuggestions = []; // Clear suggestions
+      this.startPoint = `${center[0]},${center[1]}`;  // Set coordinates
+      this.startPlaceName = place_name;
+      this.startSuggestions = [];  // Clear suggestions
 
       // Add start marker to the map
       if (this.startMarker) {
-        this.startMarker.remove(); // Remove previous marker
+        this.startMarker.remove();  // Remove previous marker
       }
       this.startMarker = new mapboxgl.Marker({ color: 'green' })
         .setLngLat(center)
         .addTo(this.map);
     },
+    // Set endPoint to the coordinates of the selected end location
     setEndPoint(suggestion) {
       const { center, place_name } = suggestion;
-      this.endPoint = `${center[0]},${center[1]}`; // Set coordinates
-      this.endPlaceName = place_name; // Set place name
-      this.endSuggestions = []; // Clear suggestions
+      this.endPoint = `${center[0]},${center[1]}`;  // Set coordinates
+      this.endPlaceName = place_name;
+      this.endSuggestions = [];  // Clear suggestions
 
       // Add end marker to the map
       if (this.endMarker) {
-        this.endMarker.remove(); // Remove previous marker
+        this.endMarker.remove();  // Remove previous marker
       }
       this.endMarker = new mapboxgl.Marker({ color: 'red' })
         .setLngLat(center)
@@ -358,30 +358,29 @@ export default {
         // Create URL for the Mapbox Directions API
         let url = `https://api.mapbox.com/directions/v5/mapbox/${this.transportation}/${this.startPoint};${this.endPoint}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
+        // Add "exclude" and "depart_at" parameters to the URL if avoidParams and formattedDepartureTime were defined
         if (avoidParams) {
           url += `&exclude=${avoidParams}`;
         }
-
         if (formattedDepartureTime) {
           url += `&depart_at=${formattedDepartureTime}`;
         }
 
         console.log('API Request URL:', url);
 
+        // Send the request to the Mapbox API
         const response = await fetch(url);
-
         if (!response.ok) {
           const errorText = await response.text();
           console.error('Response Error:', errorText);
           throw new Error('Failed to fetch directions.');
         }
 
+        // Parse response to JSON format
         const data = await response.json();
-
         if (!data.routes || data.routes.length === 0) {
           throw new Error('No route found.');
         }
-
         const route = data.routes[0].geometry;
 
         // Remove any existing route layer
@@ -401,7 +400,7 @@ export default {
             data: {
               type: 'Feature',
               properties: {},
-              geometry: route,
+              geometry: route,  // set the data to the route geometry from the response
             },
           },
           layout: {
@@ -459,7 +458,7 @@ export default {
     },
   },
   mounted() {
-    this.initializeMap();
+    this.initializeMap();  // run initializeMap() when the component is mounted, setting up the initial map and loading data
   },
 };
 </script>

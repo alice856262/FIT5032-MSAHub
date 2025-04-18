@@ -170,7 +170,6 @@ export default {
           }
         }
       });
-
       symptomComparisons.value = comparisons; // Update the comparison paragraph
     };
 
@@ -219,7 +218,6 @@ export default {
             symptoms.push({ ...data, timestamp: data.date?.seconds });
           }
         });
-
         // Process and update the chart with the new data
         processSymptoms(symptoms);
       });
@@ -233,7 +231,7 @@ export default {
     // Load symptom data when the component is mounted and listen to real-time updates
     onMounted(() => {
       if (currentUser.value) {
-        listenToSymptoms(); // Only listen if userId is available
+        listenToSymptoms();  // only listen if userId is available
       }
     });
 

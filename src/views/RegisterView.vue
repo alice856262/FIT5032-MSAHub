@@ -132,16 +132,16 @@ const router = useRouter();
 // import Column from 'primevue/column';
 
 const formData = ref({
-    firstName: '',
-    lastName: '', 
-    gender: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    dob: '',
-    address: '',
-    reason: ''
+  firstName: '',
+  lastName: '', 
+  gender: '',
+  email: '',
+  phone: '',
+  password: '',
+  confirmPassword: '',
+  dob: '',
+  address: '',
+  reason: ''
 });
 
 // Form Submission
@@ -244,27 +244,27 @@ const errors = ref({
 });
 
 const validateFirstName = (blur) => {
-    if (!formData.value.firstName) {
-        if (blur) errors.value.firstName = "First name is required.";
-    } else {
-        errors.value.firstName = null;
-    }
+  if (!formData.value.firstName) {
+    if (blur) errors.value.firstName = "First name is required.";
+  } else {
+    errors.value.firstName = null;
+  }
 };
 
 const validateLastName = (blur) => {
-    if (!formData.value.lastName) {
-        if (blur) errors.value.lastName = "Last name is required.";
-    } else {
-        errors.value.lastName = null;
-    }
+  if (!formData.value.lastName) {
+    if (blur) errors.value.lastName = "Last name is required.";
+  } else {
+    errors.value.lastName = null;
+  }
 };
 
 const validateGender = () => {
-    if (!formData.value.gender) {
-        errors.value.gender = "Please select your gender.";
-    } else {
-        errors.value.gender = null;
-    }
+  if (!formData.value.gender) {
+    errors.value.gender = "Please select your gender.";
+  } else {
+    errors.value.gender = null;
+  }
 };
 
 const validateEmail = (blur) => {
@@ -318,11 +318,11 @@ const validateDob = (blur) => {
 };
 
 const validateReason = () => {
-    if (!formData.value.reason) {
-        errors.value.reason = "Please select your reason.";
-    } else {
-        errors.value.reason = null;
-    }
+  if (!formData.value.reason) {
+    errors.value.reason = "Please select your reason.";
+  } else {
+    errors.value.reason = null;
+  }
 };
 </script>
 

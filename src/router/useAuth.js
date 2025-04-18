@@ -8,6 +8,7 @@ const currentUser = ref(null);
 const userType = ref(null);
 const isAuthenticated = ref(false);
 
+// Monitor the authentication state of the user
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser.value = user;
@@ -31,6 +32,7 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+// Use signInWithEmailAndPassword() from Firebase Auth to authenticate the user
 const login = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -63,6 +65,7 @@ const loginWithGoogle = async () => {
   }
 };
 
+// Use signOut() from Firebase Auth to sign the user out
 const logout = async () => {
   try {
     await signOut(auth);

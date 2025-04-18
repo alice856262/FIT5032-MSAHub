@@ -19,7 +19,7 @@
       </div>
       <div class="mb-3">
         <label for="attachment">Attachments</label>
-        <input @change="onFileChange" type="file" id="attachment" class="form-control" multiple aria-label="Attach files if necessary" />
+        <input @change="onFileChange" type="file" id="attachment" class="form-control" multiple aria-label="Attach files if necessary" />  <!-- use "multiple" to allow multiple files -->
       </div>
       <div class="text-center">
         <button type="submit" class="btn btn-primary" aria-label="Submit your message">Submit</button>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios';  // for HTTP requests
 import { getFirestore, addDoc, collection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -57,7 +57,7 @@ export default {
         const storageRef = ref(storage, storagePath);
         await uploadBytes(storageRef, file);
         const downloadURL = await getDownloadURL(storageRef);
-        uploadedFiles.push(downloadURL); // Store the download URL of the uploaded file
+        uploadedFiles.push(downloadURL);  // Store the download URL of the uploaded file
       }
 
       // Save message content and attachment URLs to Firestore
@@ -76,7 +76,7 @@ export default {
         // Save message content to Firestore
         await this.saveToFirestore();
 
-        // Send the email using the backend function
+        // Send the name and email to an external email API endpoint via axios.post to handle the actual email sending
         const response = await axios.post('https://sendemail-t4aajf3gxq-uc.a.run.app', {
           name: this.name,
           email: this.email,

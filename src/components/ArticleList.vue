@@ -50,7 +50,7 @@ export default {
         console.error('Error fetching articles:', error);
       }
     };
-
+    // Call fetchArticles when the component is mounted
     onMounted(fetchArticles);
     return { articles, columns };
   },

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Search all columns input -->
     <label for="globalSearch" class="sr-only">Global Search</label>
     <input
       id="globalSearch"
@@ -12,6 +13,7 @@
 
     <table class="table" aria-label="Data Table">
       <thead>
+        <!-- loop through columns, enabling sorting by clicking on headers, with ascending/descending indicators -->
         <tr>
           <th v-for="(column, index) in columns" 
             :key="index" 
@@ -24,6 +26,7 @@
             </span>
           </th>
         </tr>
+        <!-- add individual search boxes for each searchable column -->
         <tr>
           <th v-for="(column, index) in columns" :key="'search-' + index" scope="col">
             <label v-if="column.searchable" :for="'search-' + column.key" class="sr-only">
@@ -47,15 +50,14 @@
           :key="index"
           @mouseover="hoveredRow = index"
           @mouseleave="hoveredRow = null"
-          :class="{ 'row-hover': hoveredRow === index }"
-        >
+          :class="{ 'row-hover': hoveredRow === index }">
+          <!-- loop through paginatedRows and displays each row, with conditional links for titles -->
           <td v-for="(column, colIndex) in columns" :key="colIndex">
             <router-link
               v-if="column.key === 'title'"
               :to="`/article/${row.id}`"
               class="article-link"
-              aria-label="Go to article {{ row[column.key] }}"
-            >
+              aria-label="Go to article {{ row[column.key] }}">
               {{ row[column.key] }}
             </router-link>
             <span v-else>{{ row[column.key] }}</span>
@@ -76,7 +78,7 @@
 import { ref, computed, watch } from 'vue';
 
 export default {
-  props: {
+  props: {  // receive rows, columns, and rowsPerPage from the parent component
     rows: {
       type: Array,
       required: true,
@@ -97,6 +99,7 @@ export default {
     const currentSort = ref({ column: null, asc: true });
     const hoveredRow = ref(null);
 
+    // Set up empty search fields for each column
     const initializeColumnSearch = () => {
       props.columns.forEach((col) => {
         columnSearch.value[col.key] = '';
@@ -104,19 +107,20 @@ export default {
     };
     initializeColumnSearch();
 
+    // Filter rows based on global search and column-specific search inputs
     const filteredRows = computed(() => {
       let filtered = props.rows;
-
+      // Global Search
       if (globalSearch.value) {
         filtered = filtered.filter((row) =>
-          props.columns.some((col) =>
+          props.columns.some((col) =>  // use ".some" to check all columns
             String(row[col.key]).toLowerCase().includes(globalSearch.value.toLowerCase())
           )
         );
       }
-
+      // Column Search
       filtered = filtered.filter((row) =>
-        props.columns.every(
+        props.columns.every(  // compare each column's search value (columnSearch[col.key]) to the corresponding cell value in lowercase
           (col) =>
             !columnSearch.value[col.key] ||
             String(row[col.key])
@@ -124,14 +128,15 @@ export default {
               .includes(columnSearch.value[col.key].toLowerCase())
         )
       );
-
       return filtered;
     });
 
+    // Sort rows based on the selected column and order
     const sortedRows = computed(() => {
       if (!currentSort.value.column) return filteredRows.value;
 
       return filteredRows.value.slice().sort((a, b) => {
+        // If a column is set, it sorts filteredRows by that column using asc or desc based on modifier (1 for ascending, -1 for descending)
         const modifier = currentSort.value.asc ? 1 : -1;
         if (a[currentSort.value.column] < b[currentSort.value.column]) return -1 * modifier;
         if (a[currentSort.value.column] > b[currentSort.value.column]) return 1 * modifier;
@@ -139,19 +144,20 @@ export default {
       });
     });
 
+    // Compute total pages and paginates rows based on the current page
     const totalPages = computed(() => Math.ceil(sortedRows.value.length / props.rowsPerPage));
-
     const paginatedRows = computed(() => {
       const start = (currentPage.value - 1) * props.rowsPerPage;
-      return sortedRows.value.slice(start, start + props.rowsPerPage);
+      return sortedRows.value.slice(start, start + props.rowsPerPage);  // return only the rows for the current page by slicing sortedRows
     });
 
+    // Toggle sorting for the selected column
     const sortByColumn = (column) => {
       if (currentSort.value.column === column.key) {
         currentSort.value.asc = !currentSort.value.asc;
       } else {
         currentSort.value.column = column.key;
-        currentSort.value.asc = true;
+        currentSort.value.asc = true;  // default to ascending order
       }
     };
 
@@ -171,6 +177,7 @@ export default {
       currentPage.value = 1;
     });
 
+    // Expose the reactive properties and methods for use in the template
     return {
       globalSearch,
       columnSearch,

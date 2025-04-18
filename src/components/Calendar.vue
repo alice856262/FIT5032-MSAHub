@@ -23,7 +23,7 @@
               <input type="checkbox" v-model="eventForm.allDay" aria-label="All Day Event Checkbox" /> All Day Event
             </label>
           </div>
-          <div v-if="!eventForm.allDay">
+          <div v-if="!eventForm.allDay">  <!-- visible only if allDay is unchecked -->
             <div class="form-group">
               <label for="startTime">Start Time:</label>
               <input type="datetime-local" id="startTime" class="form-control" v-model="eventForm.startTime" aria-label="Event Start Time" required />
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { watch } from 'vue';
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -73,13 +73,13 @@ export default {
       calendarOptions: {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         initialView: 'dayGridMonth',
-        editable: true, // Make events draggable
-        selectable: true, // Allow selecting a date range
+        editable: true,  // make events draggable
+        selectable: true, // allow selecting a date range
         events: [],
         dateClick: this.handleDateClick,
         eventClick: this.handleEventClick,
-        eventChange: this.handleEventChange, // For drag-and-drop event changes
-        select: this.handleDateRangeSelect, // For selecting a date range to create an event
+        eventChange: this.handleEventChange,  // for drag-and-drop event changes
+        select: this.handleDateRangeSelect,  // for selecting a date range to create an event
       },
     };
   },
@@ -126,6 +126,7 @@ export default {
       }
       this.showModal = true;
     },
+    // Check if the newEvent conflicts with any existing events, return true if there is a conflict
     checkForConflicts(newEvent, excludeEventId = null) {
       return this.events.some(event => {
         if (excludeEventId && event.id === excludeEventId) {
@@ -146,7 +147,6 @@ export default {
     },
     saveEvent() {
       const { currentUser } = useAuth();
-
       if (!currentUser.value) {
         alert('User not logged in.');
         return;
@@ -189,7 +189,6 @@ export default {
             console.error('Error adding event:', error);
           });
       }
-
       this.closeModal();
     },
     deleteEvent() {
@@ -207,6 +206,7 @@ export default {
       }
       this.closeModal();
     },
+    // Triggered when an event is dragged to a new time (revert changes if a conflict is found)
     handleEventChange(info) {
       const updatedEvent = {
         userId: info.event.extendedProps.userId,

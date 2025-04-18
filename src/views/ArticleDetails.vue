@@ -152,7 +152,7 @@ import { collection, getDocs, query, where, doc, getDoc, addDoc } from 'firebase
 import { db } from '../config/firebaseConfig.js';
 import { useAuth } from '../router/useAuth.js';
 import DOMPurify from 'dompurify';
-import jsPDF from 'jspdf';
+import jsPDF from 'jspdf';  // for creating and downloading PDF documents
 
 function sanitizeInput(input) {
   return DOMPurify.sanitize(input);
@@ -192,9 +192,11 @@ export default {
       const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
       return totalRating / this.reviews.length;
     },
+    // Set the stroke offset for the progress ring based on recommendationPercentage
     strokeDashoffset() {
       return this.circumference - (this.recommendationPercentage / 100) * this.circumference;
     },
+    // Provide a truncated version of the article content for preview
     truncatedContent() {
       const maxLength = 200; // Define the max length for summary
       const rawContent = this.article.content.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags for accurate truncation
@@ -205,7 +207,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchArticleData();
+    this.fetchArticleData();  // fetch data when the component is mounted
   },
   methods: {
     sanitize(content) {
@@ -255,6 +257,7 @@ export default {
         console.error('Error fetching article or review data:', error);
       }
     },
+    // Toggle between displaying the full content or a truncated version
     toggleContent() {
       this.showFullContent = !this.showFullContent;
     },
@@ -327,6 +330,7 @@ export default {
 
       return '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
     },
+    // Calculate the percentage of each rating level (e.g., 5 stars) for the rating bar
     getRatingPercentage(rating) {
       if (this.reviews.length === 0) return 0;
       const ratingCount = this.reviews.filter(review => review.rating === rating).length;
@@ -346,22 +350,27 @@ export default {
       } else {
         // Create CSV content
         const headers = ['Title', 'Content'];
-        const row = [this.article.title, this.article.content.replace(/<\/?[^>]+(>|$)/g, "")];
+        const row = [this.article.title, this.article.content.replace(/<\/?[^>]+(>|$)/g, "")];  // remove any HTML tags from the article content
 
         // Combine headers and row into a CSV string
         let csvContent = "data:text/csv;charset=utf-8," 
                           + headers.join(",") + "\n" 
                           + row.join(",");
 
-        // Create a downloadable link
+        // Encode the CSV content to ensure it's in a proper format for downloading
         const encodedUri = encodeURI(csvContent);
+        // Create an anchor (<a>) element to act as a download link
         const link = document.createElement('a');
+        // Set the href attribute of the link to the encoded URI
         link.setAttribute('href', encodedUri);
+        // Set the download attribute to suggest a filename for the CSV
         link.setAttribute('download', `${this.article.title}.csv`);
-        document.body.appendChild(link); // Required for Firefox
-
+        // Add the link element to the DOM, making it available for the click event
+        document.body.appendChild(link);
+        // Simulate a click on the link, triggering the download
         link.click();
-        document.body.removeChild(link); // Clean up
+        // Remove the link from the DOM after the download to clean up
+        document.body.removeChild(link);
       }
     },
     downloadPDF() {
@@ -371,6 +380,7 @@ export default {
         this.$router.push('/login');
       } else {
         const doc = new jsPDF();
+        // Retrieve the height of the page in the PDF document
         const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
         let yOffset = 10;
         const lineHeight = 10;
@@ -380,17 +390,18 @@ export default {
         doc.text("Article Title: " + this.article.title, 10, yOffset);
         
         // Add article content
-        yOffset += lineHeight + 5; // Add space for the next section
+        yOffset += lineHeight + 5;  // add space for the next section
         doc.setFontSize(12);
         
-        const splitContent = doc.splitTextToSize("Content: " + this.article.content.replace(/<\/?[^>]+(>|$)/g, ""), 190); // Wrap text to fit the page width
+        // Use splitTextToSize to wrap the content to fit width, and remove HTML tags
+        const splitContent = doc.splitTextToSize("Content: " + this.article.content.replace(/<\/?[^>]+(>|$)/g, ""), 190);
         splitContent.forEach((line) => {
-          if (yOffset + lineHeight > pageHeight - 10) { // Check if content exceeds page height
+          if (yOffset + lineHeight > pageHeight - 10) {  // check if content exceeds page height
             doc.addPage();
-            yOffset = 10; // Reset yOffset for the new page
+            yOffset = 10;  // reset yOffset for the new page
           }
           doc.text(line, 10, yOffset);
-          yOffset += lineHeight;
+          yOffset += lineHeight;  // increase yOffset by lineHeight for the next line
         });
 
         // Save the document
